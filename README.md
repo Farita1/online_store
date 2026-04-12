@@ -1,9 +1,5 @@
 # online_store
 
-¡Excelente nombre! Zora suena corto, moderno y con mucha identidad para una marca de fitness y moda.
-
-Aquí tienes la descripción completa y actualizada para tu archivo README.md. He incluido las tecnologías que mencionaste y una estructura profesional para que tu repositorio destaque.
-
 Zora | Online Store
 Zora es una plataforma de comercio electrónico especializada en la venta de suplementos para gimnasio y ropa deportiva. Diseñada bajo una arquitectura limpia y eficiente, la aplicación permite a los entusiastas del fitness gestionar sus compras y listas de deseos de manera intuitiva.
 
