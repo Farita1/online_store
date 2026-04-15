@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zora | {% block title %}{% endblock %}</title>
+    <script src='{{ url_for("static", filename="js/popper.min.js") }}'></script>
+    <script src='{{ url_for("static", filename="js/bootstrap.min.js") }}'></script>
+
+
+    <script src="https://kit.fontawesome.com/7446a5c4db.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-icons.min.css') }}">
+
+
+    <link rel="stylesheet" href='{{ url_for("static", filename="css/all.min.css") }}'>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href='{{ url_for("static", filename="css/forms.css") }}'>
+
+</head>
+<body>
+        <div class="container mt-4">
+        {% for message in get_flashed_messages() %}
+        <div class="alert alert-dismissible fade show shadow-sm" role="alert" 
+             style="background: var(--zora-nav); color: white; border-left: 4px solid var(--zora-primary);">
+            <i class="bi bi-info-circle me-2"></i> {{ message }}
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <main>
+        {% block body %}
+        {% endblock %}
+    </main>
+</body>
+</html>

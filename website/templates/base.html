@@ -54,13 +54,24 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle btn-zora px-3 text-white" href="#" role="button" id="userMenu"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle me-1"></i> Mi Espacio
+                            <i class="bi bi-person-circle me-1"></i> 
+                            {# Muestra el nombre si está logueado, sino "Mi Espacio" #}
+                            {% if current_user.is_authenticated %}
+                                {{ current_user.first_name }}
+                            {% else %}
+                                Mi Espacio
+                            {% endif %}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userMenu">
-                            <li><a class="dropdown-item" href="#">Mi Perfil</a></li>
-                            <li><a class="dropdown-item" href="#">Mis Compras</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="/log-out">Cerrar Sesión</a></li>
+                            {% if current_user.is_authenticated %}
+                                <li><a class="dropdown-item" href="#">Mi Perfil</a></li>
+                                <li><a class="dropdown-item" href="#">Mis Compras</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="{{ url_for('auth.login') }}">Cerrar Sesión</a></li>
+                            {% else %}
+                                <li><a class="dropdown-item" href="{{ url_for('auth.login') }}">Iniciar Sesión</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.sign_up') }}">Registrarse</a></li>
+                            {% endif %}
                         </ul>
                     </li>
                 </ul>
@@ -104,12 +115,9 @@
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    
     <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-    
     <script src='{{ url_for("static", filename="js/owl.carousel.min.js") }}'></script>
-    
 
 </body>
 </html>

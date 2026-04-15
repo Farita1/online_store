@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %} Registro {% endblock %}
+
+{% block body %}
+
+<section class="auth-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="zora-card-bg shadow-lg p-4">
+                    
+                    <div class="text-center mb-4">
+                        <h3 class="fw-bold"><span class="zora-dot">Únete a ZORA.</span></h3>
+                        <p style="color: var(--zora-muted); font-size: 0.9rem;">
+                            Crea tu cuenta y optimiza tu estilo de vida.
+                        </p>
+                    </div>
+
+                    <form method="POST" novalidate>
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold" style="color: var(--zora-muted);">DIRECCIÓN EMAIL</label>
+                            <div class="search-container d-flex align-items-center px-2">
+                                <i class="bi bi-envelope ms-2" style="color: var(--zora-primary);"></i>
+                                {{ form.email(class="form-control search-input", placeholder="usuario@correo.com") }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold" style="color: var(--zora-muted);">NOMBRE DE USUARIO</label>
+                            <div class="search-container d-flex align-items-center px-2">
+                                <i class="bi bi-person ms-2" style="color: var(--zora-primary);"></i>
+                                {{ form.username(class="form-control search-input", placeholder="Tu alias") }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold" style="color: var(--zora-muted);">CONTRASEÑA</label>
+                            <div class="search-container d-flex align-items-center px-2">
+                                <i class="bi bi-lock ms-2" style="color: var(--zora-primary);"></i>
+                                {{ form.password1(class="form-control search-input", placeholder="Mínimo 8 caracteres") }}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold" style="color: var(--zora-muted);">CONFIRMAR CONTRASEÑA</label>
+                            <div class="search-container d-flex align-items-center px-2">
+                                <i class="bi bi-shield-lock ms-2" style="color: var(--zora-primary);"></i>
+                                {{ form.password2(class="form-control search-input", placeholder="Repite contraseña") }}
+                            </div>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            {{ form.submit(class="btn btn-zora py-2 fw-bold") }}
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <p class="small" style="color: var(--zora-muted);">
+                                ¿Ya tienes cuenta? 
+                                <a href="{{ url_for('auth.login') }}" class="text-decoration-none fw-bold" style="color: var(--zora-primary);">
+                                    Inicia sesión aquí
+                                </a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .auth-section {
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        padding: 40px 0;
+        background: linear-gradient(rgba(18, 20, 23, 0.8), rgba(18, 20, 23, 0.8)), 
+                    url("{{ url_for('static', filename='images/—Pngtree—a fully equipped gym with_16142999.png') }}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+</style>
+
+{% endblock %}
