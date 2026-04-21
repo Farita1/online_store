@@ -3,7 +3,6 @@
 {% block title %} Iniciar Sesión {% endblock %}
 
 {% block body %}
-
 <section class="auth-section">
     <div class="container">
         <div class="row justify-content-center">
@@ -11,7 +10,7 @@
                 <div class="zora-card-bg shadow-lg p-4">
                     
                     <div class="text-center mb-4">
-                        <h3 class="fw-bold"><span class="zora-dot">Bienvenido a ZORA.</span></h3>
+                        <h3 class="fw-bold">Bienvenido a <span class="zora-dot">ZORA.</span></h3>
                         <p style="color: var(--zora-muted); font-size: 0.9rem;">
                             Ingresa para continuar con tus compras
                         </p>
@@ -49,27 +48,9 @@
                             </p>
                         </div>
                     </form>
-
                 </div>
             </div>
         </div>
     </div>
 </section>
-
-<style>
-    .auth-section {
-        min-height: 85vh;
-        display: flex;
-        align-items: center;
-        /* RUTA DE TU IMAGEN */
-        background: linear-gradient(rgba(18, 20, 23, 0.8), rgba(18, 20, 23, 0.8)), 
-                    url("{{ url_for('static', filename='images/—Pngtree—a fully equipped gym with_16142999.png') }}");
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed; /* Efecto Parallax sutil */
-    }
-
-    .search-input::placeholder { color: rgba(255, 255, 255, 0.3) !important; }
-</style>
-
 {% endblock %}

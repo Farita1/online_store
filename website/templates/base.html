@@ -11,6 +11,7 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png', v='1.2') }}" type="image/x-icon">
 
     <script src="https://kit.fontawesome.com/7446a5c4db.js" crossorigin="anonymous"></script>
+    <script src='{{ url_for("static", filename="js/sweetalert2@11.js") }}'></script>
 
     <title>Zora | {% block title %} {% endblock %} </title>
 </head>
@@ -55,9 +56,8 @@
                         <a class="nav-link dropdown-toggle btn-zora px-3 text-white" href="#" role="button" id="userMenu"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-circle me-1"></i> 
-                            {# Muestra el nombre si está logueado, sino "Mi Espacio" #}
                             {% if current_user.is_authenticated %}
-                                {{ current_user.first_name }}
+                                {{ current_user.username }}
                             {% else %}
                                 Mi Espacio
                             {% endif %}
@@ -67,7 +67,7 @@
                                 <li><a class="dropdown-item" href="#">Mi Perfil</a></li>
                                 <li><a class="dropdown-item" href="#">Mis Compras</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="{{ url_for('auth.login') }}">Cerrar Sesión</a></li>
+                                <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">Cerrar Sesión</a></li>
                             {% else %}
                                 <li><a class="dropdown-item" href="{{ url_for('auth.login') }}">Iniciar Sesión</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('auth.sign_up') }}">Registrarse</a></li>
@@ -79,15 +79,24 @@
         </div>
     </nav>
 
-    <div class="container mt-4">
-        {% for message in get_flashed_messages() %}
-        <div class="alert alert-dismissible fade show shadow-sm" role="alert" 
-             style="background: var(--zora-nav); color: white; border-left: 4px solid var(--zora-primary);">
-            <i class="bi bi-info-circle me-2"></i> {{ message }}
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endfor %}
-    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            {% for category, message in messages %}
+              Swal.fire({
+                title: "{{ '¡Hecho!' if category == 'success' else 'Aviso' }}",
+                text: "{{ message }}",
+                icon: "{{ 'success' if category == 'success' else 'error' }}",
+                confirmButtonColor: '#212529',
+                background: '#1a1d20',
+                color: '#ffffff'
+              });
+            {% endfor %}
+          });
+        </script>
+      {% endif %}
+    {% endwith %}
 
     <main>
         {% block body %}

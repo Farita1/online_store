@@ -7,7 +7,8 @@ class Customer(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True)
     username = db.Column(db.String(100))
-    password_hash = db.Column(db.String(150))
+    # Aumentamos a 255 para evitar el error StringDataRightTruncation
+    password_hash = db.Column(db.String(255)) 
     date_joined = db.Column(db.DateTime(), default=datetime.utcnow)
 
     cart_items = db.relationship('Cart', backref='customer', lazy=True)
@@ -19,6 +20,7 @@ class Customer(db.Model, UserMixin):
 
     @password.setter
     def password(self, password):
+        # Werkzeug genera hashes largos, necesitamos espacio en la DB
         self.password_hash = generate_password_hash(password=password)
 
     def verify_password(self, password):
@@ -65,7 +67,6 @@ class Cart(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
 
     customer_link = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
-    # Cambiamos product_link por variant_link
     variant_link = db.Column(db.Integer, db.ForeignKey('product_variant.id'), nullable=False)
 
     def __str__(self):
@@ -80,7 +81,6 @@ class Order(db.Model):
     date_ordered = db.Column(db.DateTime, default=datetime.utcnow)
 
     customer_link = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
-    # Cambiamos product_link por variant_link
     variant_link = db.Column(db.Integer, db.ForeignKey('product_variant.id'), nullable=False)
 
     def __str__(self):

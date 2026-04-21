@@ -15,10 +15,10 @@ def create_app():
 
     # 2. Configurar Flask-Login
     login_manager = LoginManager()
-    login_manager.login_view = 'auth.login' # A dónde redirigir si no está logueado
     login_manager.init_app(app)
+    login_manager.login_view = 'auth.login'
 
-    from .models import Customer # Asegúrate de que tu modelo se llame Customer o User
+    from .models import Customer
 
     @login_manager.user_loader
     def load_user(id):
