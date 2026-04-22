@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %} Perfil - {{ customer.username }} {% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <h3 class="fw-bold">
+                Bienvenido, <span class="text-capitalize zora-dot">{{ customer.username }}</span>
+            </h3>
+        </div>
+
+        <div class="col-sm-3 mb-4">
+            <div class="zora-card-bg">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <a href="{{ url_for('auth.profile', customer_id=customer.id) }}" class="text-decoration-none" style="color: inherit;">
+                            <i class="bi bi-person-fill me-2"></i> Mi Perfil
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#" class="text-decoration-none" style="color: inherit;">
+                            <i class="bi bi-bag-check-fill me-2"></i> Mis Pedidos
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="{{ url_for('auth.change_password', customer_id=customer.id) }}" class="text-decoration-none" style="color: inherit;">
+                            <i class="bi bi-shield-lock-fill me-2"></i> Cambiar Contraseña
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-sm-8 offset-sm-1">
+            <div class="zora-card-bg p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-3 text-center mb-3 mb-md-0">
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center" 
+                             style="width: 100px; height: 100px; background-color: var(--zora-nav); border: 2px solid var(--zora-primary);">
+                            <i class="bi bi-person" style="font-size: 3rem; color: var(--zora-primary);"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <h4 class="mb-1 text-capitalize">{{ customer.username }}</h4>
+                        <p class="text-muted mb-3">{{ customer.email }}</p>
+                        
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-zora">
+                                <i class="bi bi-pencil-square me-1"></i> Editar Datos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4" style="border-color: #2d3238;">
+
+                <div class="row">
+                    <div class="col-6">
+                        <small class="text-muted d-block">ID de Cliente</small>
+                        <span>#{{ customer.id }}</span>
+                    </div>
+                    <div class="col-6 text-end">
+                        <small class="text-muted d-block">Estado de cuenta</small>
+                        <span class="badge badge-zora">Activo</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

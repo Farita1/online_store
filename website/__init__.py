@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager # 1. Importar
 
@@ -12,6 +12,10 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
     db.init_app(app)
+    
+    @app.errorhandler(404)
+    def page_not_found(error):
+        return render_template('404.html', error=error), 404
 
     # 2. Configurar Flask-Login
     login_manager = LoginManager()

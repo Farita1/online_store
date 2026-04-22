@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Página no encontrada | Zora</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='1.2') }}">
+
+    <style>
+        .error-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+
+        .error-img {
+            max-width: 100%;
+            height: auto;
+            /* Sombra sutil para que la imagen resalte sobre el fondo oscuro */
+            filter: drop-shadow(0 0 15px rgba(124, 77, 255, 0.3));
+            margin-bottom: 2rem;
+        }
+
+        .error-code {
+            font-size: 6rem;
+            font-weight: 900;
+            line-height: 1;
+            background: linear-gradient(45deg, #fff, var(--zora-primary));
+
+            /* Compatibilidad de recorte de fondo para texto */
+            -webkit-background-clip: text;
+            /* Safari y Chrome antiguos */
+            background-clip: text;
+            /* Estándar moderno */
+
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <section class="auth-section error-container">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <img src="{{ url_for('static', filename='images/404.png') }}" alt="Error 404" class="error-img"
+                        style="width: 450px;">
+
+                    <h1 class="error-code">404</h1>
+                    <h2 class="fw-bold mb-3">¡Vaya! Te has salido de la ruta.</h2>
+                    <p class="text-muted mb-5 px-md-5">
+                        La página que buscas no existe o ha sido movida.
+                        No te preocupes, incluso los mejores atletas pierden el ritmo a veces.
+                    </p>
+
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="/" class="btn btn-zora px-4 py-2 fw-bold">
+                            <i class="bi bi-house-door me-2"></i>Volver al Inicio
+                        </a>
+                        <button onclick="history.back()" class="btn btn-outline-light px-4 py-2 fw-bold"
+                            style="border-radius: 8px;">
+                            <i class="bi bi-arrow-left me-2"></i>Regresar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+
+</html>

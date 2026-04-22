@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %} Shop Items {% endblock %}
+
+{% block body %}
+<section class="container my-5">
+    {% if items | length < 1 %} <div class="no-items">
+        <h3 class="text-white"><i class="bi bi-box-seam d-block mb-3 opacity-50"></i>No hay productos en el inventario
+        </h3>
+        <p>Comienza agregando nuevos productos al sistema.</p>
+        </div>
+        {% else %}
+        <h3 class="mb-4 text-white">Inventario <span class="zora-dot">Zora</span></h3>
+        <div class="table-responsive">
+            <table class="table table-zora align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Producto</th>
+                        <th>Precio Anterior</th>
+                        <th>Precio Actual</th>
+                        <th>Stock</th>
+                        <th>Imagen</th>
+                        <th>Oferta</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td class="text-muted small">#{{ item.id }}</td>
+                        <td class="fw-bold">{{ item.product_name }}</td>
+                        <td class="price-previous">${{ "{:,.0f}".format(item.previous_price) if item.previous_price else
+                            '-' }}</td>
+                        <td class="price-current">${{ "{:,.0f}".format(item.current_price) }}</td>
+                        <td>
+                            <span class="badge {{ 'bg-success' if item.in_stock > 5 else 'bg-danger' }}">
+                                {{ item.in_stock }}
+                            </span>
+                        </td>
+                        <td>
+                            <img src="{{ url_for('static', filename='uploads/' + item.product_picture) }}"
+                                alt="{{ item.product_name }}" class="rounded shadow-sm"
+                                style="height: 45px; width: 45px; object-fit: cover; border: 1px solid #444;">
+                        </td>
+                        <td>
+                            {% if item.flash_sale %}
+                            <span class="text-success small"><i class="bi bi-lightning-fill"></i> Sí</span>
+                            {% else %}
+                            <span class="text-muted small">No</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column gap-2">
+                                <a href="/update-item/{{ item.id }}" class="btn btn-sm btn-outline-info">
+                                    <i class="bi bi-pencil-square me-1"></i> Editar
+                                </a>
+
+                                <a href="/delete-item/{{ item.id }}" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash me-1"></i> Eliminar
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+</section>
+{% endblock %}

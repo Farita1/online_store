@@ -7,9 +7,8 @@ class Customer(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True)
     username = db.Column(db.String(100))
-    # Aumentamos a 255 para evitar el error StringDataRightTruncation
     password_hash = db.Column(db.String(255)) 
-    date_joined = db.Column(db.DateTime(), default=datetime.utcnow)
+    date_joined = db.Column(db.DateTime(), default=datetime.now)
 
     cart_items = db.relationship('Cart', backref='customer', lazy=True)
     orders = db.relationship('Order', backref='customer', lazy=True)
@@ -20,44 +19,36 @@ class Customer(db.Model, UserMixin):
 
     @password.setter
     def password(self, password):
-        # Werkzeug genera hashes largos, necesitamos espacio en la DB
         self.password_hash = generate_password_hash(password=password)
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password=password)
 
-    def __str__(self):
-        return f'<Customer {self.username}>'
-
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     product_name = db.Column(db.String(100), nullable=False)
-    reference_code = db.Column(db.String(50), unique=True) # Ej: Ref. 091058
+    reference_code = db.Column(db.String(50), unique=True)
     current_price = db.Column(db.Float, nullable=False)
-    previous_price = db.Column(db.Float, nullable=False)
+    previous_price = db.Column(db.Float, nullable=True) # Cambiado a True por si no hay oferta
     product_picture = db.Column(db.String(1000), nullable=False)
     flash_sale = db.Column(db.Boolean, default=False)
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+    in_stock = db.Column(db.Integer, default=0) # <--- AGREGADO PARA QUE COINCIDA CON EL FORM
+    date_added = db.Column(db.DateTime, default=datetime.now)
 
-    # Relación con las variantes
     variants = db.relationship('ProductVariant', backref='product', lazy=True)
 
-    def __str__(self):
-        return f'<Product {self.product_name}>'
-
 class ProductVariant(db.Model):
-    """Aquí es donde vive el catálogo tipo Leonisa (SKUs)"""
     id = db.Column(db.Integer, primary_key=True)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
-    
-    sku = db.Column(db.String(50), unique=True, nullable=False) # El número de 5 dígitos (ej: 40261)
+    sku = db.Column(db.String(50), unique=True, nullable=False)
     color = db.Column(db.String(50))
     size = db.Column(db.String(20))
     stock = db.Column(db.Integer, default=0)
 
-    # El carrito y las órdenes ahora apuntan a la VARIANTE exacta
     carts = db.relationship('Cart', backref='variant', lazy=True)
     orders = db.relationship('Order', backref='variant', lazy=True)
+
+# ... resto de modelos (Cart, Order) iguales
 
     def __str__(self):
         return f'<Variant {self.sku} - {self.color}/{self.size}>'
