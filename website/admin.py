@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, flash, redirect, url_for, current_app
+from flask import Blueprint, render_template, flash, redirect, request, url_for, current_app
 from flask_login import current_user, login_required
 from website.models import Product
 from .forms import ShopItemForm
@@ -61,3 +61,57 @@ def shop_items():
         
     items = Product.query.order_by(Product.date_added.desc()).all()
     return render_template('shop-items.html', items=items, user=current_user)
+
+@admin.route('/update-item/<int:item_id>', methods=['GET', 'POST'])
+@login_required
+def update_item(item_id):
+    # Seguridad: Solo Farita (ID 1)
+    if current_user.id != 1:
+        return render_template('404.html'), 404
+
+    item_to_update = Product.query.get_or_404(item_id)
+    form = ShopItemForm()
+
+    if form.validate_on_submit():
+        # --- LÓGICA DE PRECIO INTELIGENTE ---
+        # Si el usuario cambió el precio actual, el anterior se actualiza solo
+        nuevo_precio = form.current_price.data
+        if item_to_update.current_price != nuevo_precio:
+            item_to_update.previous_price = item_to_update.current_price
+        
+        # Actualización de campos
+        item_to_update.product_name = form.product_name.data
+        item_to_update.current_price = nuevo_precio
+        item_to_update.in_stock = form.in_stock.data
+        item_to_update.flash_sale = form.flash_sale.data
+
+        # Gestión de Imagen Opcional
+        file = form.product_picture.data
+        if file and hasattr(file, 'filename') and file.filename != '':
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(current_app.root_path, 'static/uploads', filename))
+            item_to_update.product_picture = filename
+
+        try:
+            db.session.commit()
+            flash(f'¡{item_to_update.product_name} actualizado con éxito!', 'success')
+            return redirect(url_for('admin.shop_items'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Error al guardar en la base de datos', 'danger')
+
+    # Si hay errores de validación (ej. letras en el precio)
+    elif request.method == 'POST':
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f"{getattr(form, field).label.text}: {error}", "danger")
+
+    # Carga inicial de datos
+    elif request.method == 'GET':
+        form.product_name.data = item_to_update.product_name
+        form.previous_price.data = item_to_update.previous_price
+        form.current_price.data = item_to_update.current_price
+        form.in_stock.data = item_to_update.in_stock
+        form.flash_sale.data = item_to_update.flash_sale
+
+    return render_template('update-item.html', form=form, item=item_to_update, user=current_user)

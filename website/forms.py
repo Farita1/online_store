@@ -41,11 +41,11 @@ class ShopItemForm(FlaskForm):
         validators=[DataRequired(), NumberRange(min=0)])
 
     product_picture = FileField('Imagen del producto', 
-        validators=[
-            FileRequired(message="Debes subir una imagen"),
-            FileAllowed(['jpg', 'png', 'jpeg', 'webp'], '¡Solo imágenes (jpg, png, webp)!')
-        ])
-
+    validators=[
+        Optional(), # Esto es clave
+        FileAllowed(['jpg', 'png', 'jpeg', 'webp'], '¡Solo imágenes!')
+    ])
+    
     flash_sale = BooleanField('¿Es una Oferta Flash?')
 
     submit = SubmitField('Guardar Producto')

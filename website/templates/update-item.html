@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %} Editar - {{ item.product_name }} {% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="d-flex align-items-center mb-4">
+                <div class="bg-primary rounded-circle p-2 me-3 shadow-glow">
+                    <i class="bi bi-pencil-square text-white fs-4"></i>
+                </div>
+                <h2 class="fw-bold m-0 text-white">Editar <span class="zora-dot text-primary">Producto</span></h2>
+            </div>
+
+            <div class="zora-card-bg p-4 shadow-lg border-primary-subtle" style="backdrop-filter: blur(10px); border-radius: 20px;">
+                <form action="" method="POST" enctype="multipart/form-data" class="row g-4">
+                    {{ form.hidden_tag() }}
+
+                    <div class="col-md-4 text-center">
+                        <label class="form-label text-muted small fw-bold text-uppercase d-block mb-3">Imagen del Producto</label>
+                        <div class="position-relative d-inline-block">
+                            <img id="image-preview" 
+                                 src="{{ url_for('static', filename='uploads/' + item.product_picture) }}" 
+                                 class="img-thumbnail bg-dark border-primary-zora shadow-glow mb-3"
+                                 style="width: 220px; height: 220px; object-fit: cover; border-radius: 15px;">
+                        </div>
+                        <div class="mt-3 text-start">
+                            <div class="search-container overflow-hidden">
+                                {{ form.product_picture(class="form-control search-input", id="file-input") }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label text-muted small fw-bold text-uppercase">Nombre del Producto</label>
+                                <div class="search-container">
+                                    {{ form.product_name(class="form-control search-input") }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-bold text-uppercase">Precio Anterior (Auto)</label>
+                                <div class="input-group search-container p-0 opacity-75">
+                                    <span class="input-group-text bg-transparent border-0 text-muted fw-bold">$</span>
+                                    {{ form.previous_price(class="form-control search-input", readonly=True) }}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-bold text-uppercase">Precio Actual</label>
+                                <div class="input-group search-container p-0 border-primary-zora position-relative overflow-hidden" style="height: 45px;">
+                                    <span class="input-group-text bg-transparent border-0 text-primary fw-bold">$</span>
+                                    {{ form.current_price(class="form-control search-input fw-bold custom-spin", type="number", step="any", id="current_price", min="0") }}
+                                    <div class="spinner-overlay" onclick="handleSpinClick(event, 'current_price', 10000)"></div>
+                                </div>
+                                <small class="text-muted" style="font-size: 0.7rem;">Manual o clics de $10.000</small>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-bold text-uppercase">Stock Disponible</label>
+                                <div class="search-container position-relative overflow-hidden" style="height: 45px;">
+                                    {{ form.in_stock(class="form-control search-input custom-spin", type="number", step="any", id="in_stock", min="0") }}
+                                    <div class="spinner-overlay" onclick="handleSpinClick(event, 'in_stock', 10)"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 d-flex align-items-end pb-2">
+                                <div class="form-check form-switch custom-switch">
+                                    {{ form.flash_sale(class="form-check-input", role="switch", id="flashSale") }}
+                                    <label class="form-check-label ms-2 text-white" for="flashSale">Oferta Relámpago</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 d-flex gap-3 justify-content-end">
+                            <a href="{{ url_for('admin.shop_items') }}" class="btn btn-outline-secondary px-4 fw-bold">VOLVER</a>
+                            <button type="submit" class="btn btn-zora px-5 fw-bold shadow-glow">GUARDAR CAMBIOS</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/spinners.js') }}"></script>
+
+<script>
+    // Solo inicializamos lo necesario para esta vista específica
+    setupZoraKeys('current_price', 10000);
+    setupZoraKeys('in_stock', 10);
+    setupImagePreview('file-input', 'image-preview');
+</script>
+
+<style>
+    /* Estilo para el área de captura de clics */
+    .spinner-overlay {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 35px; /* Mismo ancho que tu bloque negro */
+        height: 100%;
+        z-index: 10;
+        cursor: pointer;
+        background: transparent;
+    }
+
+    .border-primary-zora { border: 1px solid var(--zora-primary) !important; }
+    .shadow-glow { box-shadow: 0 0 15px rgba(124, 77, 255, 0.3); }
+</style>
+{% endblock %}

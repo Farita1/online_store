@@ -52,7 +52,7 @@
                         </td>
                         <td>
                             <div class="d-flex flex-column gap-2">
-                                <a href="/update-item/{{ item.id }}" class="btn btn-sm btn-outline-info">
+                                <a href="{{ url_for('admin.update_item', item_id=item.id) }}" class="btn btn-sm btn-outline-info">
                                     <i class="bi bi-pencil-square me-1"></i> Editar
                                 </a>
 
