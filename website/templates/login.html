@@ -1,48 +1,48 @@
 {% extends 'base.html' %}
 
-{% block title %} Iniciar Sesión {% endblock %}
+{% block title %} Iniciar Sesión | Zora {% endblock %}
 
 {% block body %}
 <section class="auth-section">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-5 col-lg-4">
-                <div class="zora-card-bg shadow-lg p-4">
+                <div class="zora-card-bg shadow-lg p-4 shadow-glow">
                     
                     <div class="text-center mb-4">
-                        <h3 class="fw-bold">Bienvenido a <span class="zora-dot">ZORA.</span></h3>
-                        <p style="color: var(--zora-muted); font-size: 0.9rem;">
+                        <h2 class="fw-bold text-white">Bienvenido a <span class="zora-dot">ZORA.</span></h2>
+                        <p class="text-muted small">
                             Ingresa para continuar con tus compras
                         </p>
                     </div>
 
-                    <form method="POST" novalidate>
+                    <form method="POST">
                         {{ form.hidden_tag() }}
 
                         <div class="mb-3">
-                            <label class="form-label small fw-bold" style="color: var(--zora-muted);">DIRECCIÓN EMAIL</label>
+                            <label class="form-label small fw-bold text-uppercase opacity-75">Dirección Email</label>
                             <div class="search-container d-flex align-items-center px-2">
-                                <i class="bi bi-envelope ms-2" style="color: var(--zora-primary);"></i>
+                                <i class="bi bi-envelope-fill ms-2 text-zora"></i>
                                 {{ form.email(class="form-control search-input", placeholder="usuario@correo.com") }}
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label small fw-bold" style="color: var(--zora-muted);">CONTRASEÑA</label>
+                            <label class="form-label small fw-bold text-uppercase opacity-75">Contraseña</label>
                             <div class="search-container d-flex align-items-center px-2">
-                                <i class="bi bi-lock ms-2" style="color: var(--zora-primary);"></i>
+                                <i class="bi bi-lock-fill ms-2 text-zora"></i>
                                 {{ form.password(class="form-control search-input", placeholder="********") }}
                             </div>
                         </div>
 
                         <div class="d-grid mb-3">
-                            {{ form.submit(class="btn btn-zora py-2 fw-bold") }}
+                            {{ form.submit(class="btn btn-zora py-2 fw-bold text-uppercase shadow-glow") }}
                         </div>
 
                         <div class="text-center mt-3">
-                            <p class="small" style="color: var(--zora-muted);">
+                            <p class="small text-muted">
                                 ¿No tienes cuenta? 
-                                <a href="{{ url_for('auth.sign_up') }}" class="text-decoration-none fw-bold" style="color: var(--zora-primary);">
+                                <a href="{{ url_for('auth.sign_up') }}" class="text-decoration-none fw-bold text-zora">
                                     Regístrate aquí
                                 </a>
                             </p>

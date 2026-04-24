@@ -5,85 +5,118 @@
 {% block body %}
 <section class="container my-5">
     <div class="row justify-content-center">
-        <div class="col-lg-10">
+        <div class="col-lg-11">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold text-white">Gestión de <span class="text-zora">Inventario</span></h2>
-                <a href="/" class="btn btn-outline-light btn-sm">
-                    <i class="bi bi-arrow-left me-1"></i> Panel Admin
+                <div class="d-flex align-items-center">
+                    <div class="bg-zora rounded-circle p-2 me-3 shadow-glow">
+                        <i class="bi bi-plus-lg text-white fs-4"></i>
+                    </div>
+                    <h2 class="fw-bold m-0 text-white">Gestión de <span class="zora-dot">Inventario</span></h2>
+                </div>
+                <a href="{{ url_for('admin.shop_items') }}"
+                    class="text-decoration-none text-muted d-inline-flex align-items-center fw-bold transition-03 hover-zora">
+                    <i class="bi bi-arrow-left-circle-fill me-2 fs-5 text-zora"></i>
+                    VOLVER A LISTA
                 </a>
             </div>
 
-            <div class="zora-card-bg shadow-lg p-4 mb-5">
-                <h5 class="mb-4 text-muted"><i class="bi bi-plus-circle me-2"></i>Añadir Nuevo Producto</h5>
+            <div class="zora-card-bg p-4 shadow-lg mb-5 shadow-glow" style="border-radius: 20px;">
+                <h5 class="mb-4 text-white-50 small fw-bold text-uppercase">
+                    <i class="bi bi-plus-circle me-2 text-zora"></i>Añadir Nuevo Producto
+                </h5>
 
-                <form action="" method="POST" enctype="multipart/form-data">
+                <form action="" method="POST" enctype="multipart/form-data" class="row g-4">
                     {{ form.hidden_tag() }}
 
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label small text-muted">Nombre del Producto</label>
-                            <div class="search-container px-2">
-                                {{ form.product_name(class="form-control search-input", placeholder="Ej: Proteína Whey Elite") }}
+                    <div class="col-md-4 text-center">
+                        <label class="form-label text-muted small fw-bold text-uppercase d-block mb-3">Imagen del
+                            Producto</label>
+                        <div class="position-relative d-inline-block mb-3">
+                            <img id="imagePreview" src="{{ url_for('static', filename='images/placeholder.png') }}"
+                                class="img-thumbnail bg-white shadow-glow"
+                                style="width: 220px; height: 220px; object-fit: contain; border-radius: 15px; padding: 10px; border: 2px solid var(--zora-primary);">
+                        </div>
+                        <div class="search-container overflow-hidden">
+                            {{ form.product_picture(class="form-control search-input", id="product_picture") }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label text-muted small fw-bold text-uppercase">Nombre del
+                                    Producto</label>
+                                <div class="search-container">
+                                    {{ form.product_name(class="form-control search-input", placeholder="Ej: Proteína
+                                    Whey Elite") }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-bold text-uppercase">Precio
+                                    Anterior</label>
+                                <div class="input-group search-container p-0 opacity-75">
+                                    <span class="input-group-text bg-transparent border-0 text-muted fw-bold">$</span>
+                                    {{ form.previous_price(class="form-control search-input", placeholder="0.00") }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-bold text-uppercase text-zora">Precio
+                                    Actual</label>
+                                <div class="input-group search-container p-0 border-primary-zora position-relative overflow-hidden"
+                                    style="height: 45px;">
+                                    <span class="input-group-text bg-transparent border-0 text-zora fw-bold">$</span>
+                                    {{ form.current_price(class="form-control search-input fw-bold custom-spin",
+                                    type="number", id="current_price", placeholder="0.00") }}
+                                    <div class="spinner-overlay"
+                                        onclick="handleSpinClick(event, 'current_price', 10000)"></div>
+                                </div>
+                                <small class="text-muted" style="font-size: 0.7rem;">Clics de $10.000</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small fw-bold text-uppercase">Stock Inicial</label>
+                                <div class="search-container position-relative overflow-hidden" style="height: 45px;">
+                                    {{ form.in_stock(class="form-control search-input custom-spin", type="number",
+                                    id="in_stock", placeholder="0") }}
+                                    <div class="spinner-overlay" onclick="handleSpinClick(event, 'in_stock', 10)"></div>
+                                </div>
+                                <small class="text-muted" style="font-size: 0.7rem;">Clics de 10 unidades</small>
+                            </div>
+
+                            <div class="col-md-6 d-flex align-items-center">
+                                <div class="form-check form-switch custom-switch mt-3">
+                                    {{ form.flash_sale(class="form-check-input", role="switch", id="flashSaleCheck") }}
+                                    <label class="form-check-label text-white ms-2" for="flashSaleCheck">Oferta
+                                        Relámpago</label>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="col-md-6">
-                            <label class="form-label small text-muted">Imagen del Producto</label>
-                            <div class="search-container px-2">
-                                {{ form.product_picture(class="form-control search-input", id="product_picture") }}
-                            </div>
-                            
-                            <div id="imagePreviewContainer" class="mt-3 text-center d-none" style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 15px; border: 1px dashed #444;">
-                                <p class="small text-muted mb-2">Vista previa seleccionada:</p>
-                                <img id="imagePreview" src="" alt="Vista previa" class="rounded shadow"
-                                     style="max-width: 100%; height: 150px; object-fit: contain;">
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label small text-muted">Precio Anterior</label>
-                            <div class="search-container px-2">
-                                {{ form.previous_price(class="form-control search-input", placeholder="0.00") }}
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label small text-muted">Precio Actual</label>
-                            <div class="search-container px-2">
-                                {{ form.current_price(class="form-control search-input", placeholder="0.00") }}
-                            </div>
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label small text-muted">Stock Disponible</label>
-                            <div class="search-container px-2">
-                                {{ form.in_stock(class="form-control search-input", placeholder="Cant.") }}
-                            </div>
-                        </div>
-
-                        <div class="col-md-3 d-flex align-items-center justify-content-center">
-                            <div class="form-check form-switch mt-4">
-                                {{ form.flash_sale(class="form-check-input", role="switch", id="flashSaleCheck") }}
-                                <label class="form-check-label text-white ms-2" for="flashSaleCheck">Oferta Flash</label>
-                            </div>
-                        </div>
-
-                        <div class="col-12 mt-4 text-end">
-                            {{ form.submit(class="btn btn-zora px-5 fw-bold") }}
+                        <div class="mt-5 text-end">
+                            <button type="submit" class="btn-zora px-5 py-2 fw-bold shadow-glow text-uppercase">
+                                <i class="bi bi-cloud-arrow-up me-2"></i>Crear Producto
+                            </button>
                         </div>
                     </div>
                 </form>
             </div>
 
-            <div class="table-responsive zora-card-bg p-3 rounded shadow">
-                <table id="inventoryTable" class="table table-dark table-hover align-middle border-secondary">
-                    <thead class="text-muted small text-uppercase">
+            <div class="table-responsive zora-card-bg p-0 overflow-hidden shadow-lg">
+                <div
+                    class="d-flex justify-content-between align-items-center p-3 border-bottom border-secondary bg-dark">
+                    <h5 class="text-white m-0 small fw-bold text-uppercase">Productos Recientes</h5>
+                    <span class="badge bg-dark border border-secondary text-zora px-3">{{ items|length }} ITEMS</span>
+                </div>
+                <table id="inventoryTable" class="table table-zora align-middle mb-0">
+                    <thead>
                         <tr>
-                            <th>Producto</th>
-                            <th>Precio</th>
-                            <th>Stock</th>
-                            <th>Estado</th>
-                            <th class="text-end">Acciones</th>
+                            <th class="py-3">PRODUCTO</th>
+                            <th class="py-3 text-zora">PRECIO</th>
+                            <th class="py-3">STOCK</th>
+                            <th class="py-3 text-center">OFERTA</th>
+                            <th class="py-3 text-end">ACCIONES</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -92,35 +125,56 @@
                             <td>
                                 <div class="d-flex align-items-center">
                                     <img src="{{ url_for('static', filename='uploads/' + item.product_picture) }}"
-                                         class="rounded me-2"
-                                         style="width: 45px; height: 45px; object-fit: cover; border: 1px solid #444; cursor: pointer;"
-                                         onclick="showFullImage(this.src, '{{ item.product_name }}')">
-                                    <span class="fw-bold">{{ item.product_name }}</span>
+                                        alt="{{ item.product_name }}" class="rounded bg-white p-1 me-3 shadow-sm"
+                                        style="height: 40px; width: 40px; object-fit: contain; cursor: pointer;"
+                                        onclick="showFullImage(this.src, '{{ item.product_name }}')">
+                                    <span class="text-white fw-bold">{{ item.product_name }}</span>
                                 </div>
                             </td>
                             <td>
-                                <span class="text-zora">${{ "{:,.0f}".format(item.current_price) }}</span>
-                                {% if item.previous_price %}
-                                <br><small class="text-muted text-decoration-line-through">${{ "{:,.0f}".format(item.previous_price) }}</small>
-                                {% endif %}
+                                <div class="d-flex flex-column">
+                                    <span class="text-zora fw-bold">${{ "{:,.0f}".format(item.current_price) }}</span>
+                                    {% if item.previous_price and item.previous_price > item.current_price %}
+                                    <small class="text-muted text-decoration-line-through" style="font-size: 0.75rem;">
+                                        ${{ "{:,.0f}".format(item.previous_price) }}
+                                    </small>
+                                    {% endif %}
+                                </div>
                             </td>
                             <td>
-                                {% if item.in_stock <= 5 %} 
-                                    <span class="badge bg-danger">Bajo Stock: {{ item.in_stock }}</span>
+                                {% if item.in_stock > 5 %}
+                                <span class="badge-stock bg-success-subtle text-success border border-success">{{
+                                    item.in_stock }}</span>
                                 {% else %}
-                                    <span class="badge bg-secondary">{{ item.in_stock }}</span>
+                                <span class="badge-stock bg-danger-subtle text-danger border border-danger">{{
+                                    item.in_stock }}</span>
                                 {% endif %}
                             </td>
-                            <td>
+                            <td class="text-center">
                                 {% if item.flash_sale %}
-                                    <span class="badge border border-success text-success">Flash Sale</span>
+                                <span class="badge bg-zora text-white shadow-glow" style="font-size: 0.65rem;">
+                                    <i class="bi bi-lightning-fill"></i> FLASH
+                                </span>
                                 {% else %}
-                                    <span class="text-muted small">Normal</span>
+                                <span class="text-muted opacity-50 small">No</span>
                                 {% endif %}
                             </td>
-                            <td class="text-end">
-                                <button class="btn btn-sm btn-outline-info"><i class="bi bi-pencil"></i></button>
-                                <button class="btn btn-sm btn-outline-danger ms-1"><i class="bi bi-trash"></i></button>
+                            <td class="text-end px-3">
+                                <div class="d-flex justify-content-end align-items-center gap-2">
+                                    <a href="{{ url_for('admin.update_item', item_id=item.id) }}"
+                                        class="table-action edit d-flex align-items-center justify-content-center"
+                                        title="Editar" style="width: 32px; height: 32px;">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+
+                                    <button type="button"
+                                        class="table-action delete d-flex align-items-center justify-content-center"
+                                        onclick="confirmDelete('{{ url_for('admin.delete_item', item_id=item.id) }}', '{{ item.product_name | safe }}')"
+                                        title="Eliminar"
+                                        style="width: 32px; height: 32px; background: transparent; border: none; padding: 0;">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}
@@ -133,13 +187,13 @@
 
 <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-dark border-secondary">
-            <div class="modal-header border-secondary">
-                <h5 class="modal-title text-white" id="modalTitle"></h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content zora-card-bg border-secondary">
+            <div class="modal-header border-secondary text-white">
+                <h5 class="modal-title" id="modalTitle"></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body text-center">
-                <img src="" id="modalImg" class="img-fluid rounded shadow">
+            <div class="modal-body text-center bg-dark">
+                <img src="" id="modalImg" class="img-fluid rounded shadow-glow">
             </div>
         </div>
     </div>
@@ -147,51 +201,47 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{{ url_for('static', filename='js/spinners.js') }}"></script>
 <script>
-$(document).ready(function() {
-    // 1. Inicialización de DataTable (Corregida)
-    $('#inventoryTable').DataTable({
-        "pageLength": 10,
-        "responsive": true,
-        "order": [[0, "asc"]],
-        "language": {
-            "search": "Buscar:",
-            "lengthMenu": "Mostrar _MENU_ items",
-            "info": "Mostrando _START_ a _END_ de _TOTAL_ productos",
-            "paginate": {
-                "first": "Primero",
-                "last": "Último",
-                "next": "Siguiente",
-                "previous": "Anterior"
-            }
+    // Función para mostrar imagen completa en modal
+    function showFullImage(src, name) {
+        const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+        document.getElementById('modalImg').src = src;
+        document.getElementById('modalTitle').innerText = name;
+        modal.show();
+    }
+
+    // Confirmación de eliminación
+    function confirmDelete(url, name) {
+        if (confirm(`¿Estás seguro de que deseas eliminar "${name}"?`)) {
+            window.location.href = url;
         }
-    });
+    }
 
-    // 2. Lógica de Previsualización de Imagen
-    $(document).on('change', '#product_picture', function() {
-        const file = this.files[0];
-        const $container = $('#imagePreviewContainer');
-        const $preview = $('#imagePreview');
-
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                $preview.attr('src', e.target.result);
-                $container.removeClass('d-none');
+    $(document).ready(function () {
+        // Inicialización de DataTable
+        $('#inventoryTable').DataTable({
+            "pageLength": 5,
+            "responsive": true,
+            "order": [[0, "asc"]],
+            "language": {
+                "search": "Buscar:",
+                "lengthMenu": "Ver _MENU_",
+                "info": "_START_ - _END_ de _TOTAL_",
+                "paginate": { "next": "→", "previous": "←" }
             }
-            reader.readAsDataURL(file);
-        } else {
-            $container.addClass('d-none');
-        }
-    });
-});
+        });
 
-// 3. Función para abrir el modal (Fuera del ready para que sea global)
-function showFullImage(src, name) {
-    const modal = new bootstrap.Modal(document.getElementById('imageModal'));
-    document.getElementById('modalImg').src = src;
-    document.getElementById('modalTitle').innerText = name;
-    modal.show();
-}
+        // Previsualización de imagen al cargar archivo
+        $('#product_picture').on('change', function () {
+            const file = this.files[0];
+            const $preview = $('#imagePreview');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) { $preview.attr('src', e.target.result); }
+                reader.readAsDataURL(file);
+            }
+        });
+    });
 </script>
 {% endblock %}

@@ -1,71 +1,132 @@
 {% extends 'base.html' %}
 
-{% block title %} Shop Items {% endblock %}
+{% block title %} Shop Items | Zora Admin {% endblock %}
 
 {% block body %}
 <section class="container my-5">
-    {% if items | length < 1 %} <div class="no-items">
-        <h3 class="text-white"><i class="bi bi-box-seam d-block mb-3 opacity-50"></i>No hay productos en el inventario
-        </h3>
-        <p>Comienza agregando nuevos productos al sistema.</p>
-        </div>
-        {% else %}
-        <h3 class="mb-4 text-white">Inventario <span class="zora-dot">Zora</span></h3>
-        <div class="table-responsive">
-            <table class="table table-zora align-middle">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Producto</th>
-                        <th>Precio Anterior</th>
-                        <th>Precio Actual</th>
-                        <th>Stock</th>
-                        <th>Imagen</th>
-                        <th>Oferta</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in items %}
-                    <tr>
-                        <td class="text-muted small">#{{ item.id }}</td>
-                        <td class="fw-bold">{{ item.product_name }}</td>
-                        <td class="price-previous">${{ "{:,.0f}".format(item.previous_price) if item.previous_price else
-                            '-' }}</td>
-                        <td class="price-current">${{ "{:,.0f}".format(item.current_price) }}</td>
-                        <td>
-                            <span class="badge {{ 'bg-success' if item.in_stock > 5 else 'bg-danger' }}">
-                                {{ item.in_stock }}
-                            </span>
-                        </td>
-                        <td>
-                            <img src="{{ url_for('static', filename='uploads/' + item.product_picture) }}"
-                                alt="{{ item.product_name }}" class="rounded shadow-sm"
-                                style="height: 45px; width: 45px; object-fit: cover; border: 1px solid #444;">
-                        </td>
-                        <td>
-                            {% if item.flash_sale %}
-                            <span class="text-success small"><i class="bi bi-lightning-fill"></i> Sí</span>
-                            {% else %}
-                            <span class="text-muted small">No</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <div class="d-flex flex-column gap-2">
-                                <a href="{{ url_for('admin.update_item', item_id=item.id) }}" class="btn btn-sm btn-outline-info">
-                                    <i class="bi bi-pencil-square me-1"></i> Editar
-                                </a>
+    <div class="mb-4">
+        <a href="{{ url_for('auth.profile', customer_id=current_user.id) }}" class="text-decoration-none text-muted d-inline-flex align-items-center fw-bold transition-03 hover-zora">
+            <i class="bi bi-arrow-left-circle-fill me-2 fs-5 text-zora"></i> 
+            VOLVER AL PANEL
+        </a>
+    </div>
 
-                                <a href="/delete-item/{{ item.id }}" class="btn btn-sm btn-outline-danger">
-                                    <i class="bi bi-trash me-1"></i> Eliminar
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    {% if items | length < 1 %} 
+    <div class="no-items text-center py-5 zora-card-bg">
+        <h3 class="text-white">
+            <i class="bi bi-box-seam d-block mb-3 opacity-50" style="font-size: 3rem;"></i>
+            No hay productos en el inventario
+        </h3>
+        <p class="text-muted">Comienza agregando nuevos productos al sistema.</p>
+        <div class="d-flex gap-3 justify-content-center mt-3">
+            <a href="{{ url_for('admin.add_shop_items') }}" class="btn-zora px-4 py-2">
+                <i class="bi bi-plus-lg me-2"></i>Agregar Primer Producto
+            </a>
         </div>
-        {% endif %}
+    </div>
+    {% else %}
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="text-white m-0">Inventario <span class="zora-dot">Zora</span></h3>
+            <p class="text-muted small mb-0">Gestiona los productos visibles en la tienda</p>
+        </div>
+        
+        <div class="d-flex gap-3 align-items-center">
+            <span class="badge bg-opacity-25 border border-secondary text-muted d-none d-md-inline-block p-2">
+                {{ items|length }} Items en total
+            </span>
+            <a href="{{ url_for('admin.add_shop_items') }}" class="btn-zora fw-bold shadow-glow px-4 py-2">
+                <i class="bi bi-plus-circle me-2"></i>Agregar Producto
+            </a>
+        </div>
+    </div>
+
+    <div class="table-responsive zora-card-bg p-0 overflow-hidden">
+        <table class="table table-zora align-middle mb-0">
+            <thead>
+                <tr>
+                    <th class="py-3">ID</th>
+                    <th class="py-3">PRODUCTO</th>
+                    <th class="py-3">PRECIO ANTERIOR</th>
+                    <th class="py-3 text-zora">PRECIO ACTUAL</th>
+                    <th class="py-3">STOCK</th>
+                    <th class="py-3 text-center">IMAGEN</th>
+                    <th class="py-3">OFERTA</th>
+                    <th class="py-3 text-end">ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td class="text-muted font-monospace small">#{{ item.id }}</td>
+                    <td>
+                        <span class="text-white fw-bold">{{ item.product_name }}</span>
+                    </td>
+                    <td>
+                        {% if item.previous_price %}
+                            <span class="text-muted text-decoration-line-through opacity-50">${{ "{:,.0f}".format(item.previous_price) }}</span>
+                        {% else %}
+                            <span class="opacity-25">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="text-zora fw-bold">${{ "{:,.0f}".format(item.current_price) }}</span>
+                    </td>
+                    <td>
+                        {% if item.in_stock > 5 %}
+                            <span class="badge-stock bg-success-subtle text-success border border-success">{{ item.in_stock }}</span>
+                        {% else %}
+                            <span class="badge-stock bg-danger-subtle text-danger border border-danger">{{ item.in_stock }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <img src="{{ url_for('static', filename='uploads/' + item.product_picture) }}"
+                            alt="{{ item.product_name }}" 
+                            class="rounded bg-white p-1"
+                            style="height: 42px; width: 42px; object-fit: contain; cursor: pointer;"
+                            onclick="showFullImage(this.src, '{{ item.product_name }}')">
+                    </td>
+                    <td>
+                        {% if item.flash_sale %}
+                            <span class="text-success fw-bold small"><i class="bi bi-lightning-fill"></i> SÍ</span>
+                        {% else %}
+                            <span class="text-muted small">No</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <div class="d-flex justify-content-end gap-1">
+                            <a href="{{ url_for('admin.update_item', item_id=item.id) }}" 
+                               class="table-action edit" title="Editar">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <button type="button" 
+                                    class="btn btn-link table-action delete p-0"
+                                    onclick="confirmDelete('{{ url_for('admin.delete_item', item_id=item.id) }}', '{{ item.product_name | safe }}')"
+                                    title="Eliminar">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
 </section>
+
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content zora-card-bg border-secondary text-white">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="modalTitle"></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center bg-dark">
+                <img src="" id="modalImg" class="img-fluid rounded shadow-glow">
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -1,7 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, url_for
 from flask_login import current_user, login_user, login_required, logout_user
 from .forms import PasswordChangeForm, SignUpForm, LoginForm
-from .models import Customer 
+from .models import Customer, Product 
 from . import db
 
 auth = Blueprint('auth', __name__)
@@ -66,8 +66,21 @@ def logout():
 @auth.route('/profile/<int:customer_id>')
 @login_required
 def profile(customer_id):
+    # 1. Verificamos si el usuario actual es el Administrador (ID 1)
+    if current_user.id == 1:
+        # Obtenemos los productos para mostrar el conteo en las stats del dashboard
+        items = Product.query.all() 
+        return render_template('admin_profile.html', customer=current_user, items=items)
+
+    # 2. Si no es admin, cargamos el perfil de cliente normal
     customer = Customer.query.get_or_404(customer_id)
+    
+    # Seguridad: Evitar que un usuario vea el perfil de otro (opcional pero recomendado)
+    if current_user.id != customer.id:
+        return redirect(url_for('auth.profile', customer_id=current_user.id))
+        
     return render_template('profile.html', customer=customer)
+
 
 @auth.route('/change-password/<int:customer_id>', methods=['GET', 'POST'])
 @login_required

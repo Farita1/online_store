@@ -115,3 +115,25 @@ def update_item(item_id):
         form.flash_sale.data = item_to_update.flash_sale
 
     return render_template('update-item.html', form=form, item=item_to_update, user=current_user)
+
+
+@admin.route('/delete-item/<int:item_id>', methods=['GET', 'POST'])
+@login_required
+def delete_item(item_id):
+    # Seguridad: Solo el admin (ID 1)
+    if current_user.id == 1:
+        try:
+            item_to_delete = Product.query.get_or_404(item_id)
+            
+            image_path = os.path.join(current_app.root_path, 'static/uploads', item_to_delete.product_picture)
+            if os.path.exists(image_path): os.remove(image_path)
+
+            db.session.delete(item_to_delete)
+            db.session.commit()
+            flash(f'Producto "{item_to_delete.product_name}" eliminado con éxito', 'success')
+            return redirect(url_for('admin.add_shop_items')) # Redirige a la gestión
+        except Exception as e:
+            db.session.rollback()
+            flash('Error al eliminar el producto', 'danger')
+            return redirect(url_for('admin.add_shop_items'))
+    return render_template('404.html'), 404

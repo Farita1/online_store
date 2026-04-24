@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %} Panel de Control - Admin {% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <h3 class="fw-bold text-white">
+                Panel de <span class="zora-dot">Administración</span>
+                <small class="text-muted fs-6 d-block mt-1">Bienvenido de nuevo, {{ customer.username }}</small>
+            </h3>
+        </div>
+
+        <div class="col-lg-3 mb-4">
+            <div class="zora-card-bg p-0 overflow-hidden">
+                <div class="p-3 border-bottom border-secondary bg-dark">
+                    <small class="text-muted fw-bold text-uppercase" style="font-size: 0.7rem;">Menú Principal</small>
+                </div>
+                <ul class="list-group list-group-flush admin-menu">
+                    <li class="list-group-item">
+                        <a href="{{ url_for('admin.shop_items') }}" class="text-decoration-none d-flex align-items-center py-1">
+                            <i class="bi bi-box-seam me-3 fs-5"></i> Gestionar Productos
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#" class="text-decoration-none d-flex align-items-center py-1">
+                            <i class="bi bi-cart-check me-3 fs-5"></i> Pedidos Recibidos
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#" class="text-decoration-none d-flex align-items-center py-1">
+                            <i class="bi bi-people me-3 fs-5"></i> Lista de Clientes
+                        </a>
+                    </li>
+                    <li class="list-group-item border-top border-secondary mt-2">
+                        <a href="{{ url_for('auth.change_password', customer_id=customer.id) }}" class="text-decoration-none d-flex align-items-center py-1">
+                            <i class="bi bi-shield-lock me-3 fs-5"></i> Seguridad
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="zora-card-bg p-3 text-center" style="border-left: 4px solid var(--zora-primary);">
+                        <small class="text-muted d-block text-uppercase fw-bold">Productos</small>
+                        <h3 class="text-white mb-0 mt-1">{{ items|length if items else '0' }}</h3>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="zora-card-bg p-3 text-center" style="border-left: 4px solid var(--zora-accent);">
+                        <small class="text-muted d-block text-uppercase fw-bold">Ventas Mes</small>
+                        <h3 class="text-white mb-0 mt-1">$0</h3>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="zora-card-bg p-3 text-center" style="border-left: 4px solid #00d2ff;">
+                        <small class="text-muted d-block text-uppercase fw-bold">Estado</small>
+                        <h3 class="text-white mb-0 mt-1" style="font-size: 1.5rem;">ONLINE</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="zora-card-bg p-4 shadow-glow">
+                <div class="row align-items-center">
+                    <div class="col-md-3 text-center mb-3 mb-md-0">
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center" 
+                             style="width: 110px; height: 110px; background-color: var(--zora-nav); border: 2px solid var(--zora-primary);">
+                            <i class="bi bi-person-badge text-zora" style="font-size: 3.5rem;"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h4 class="mb-1 text-capitalize text-white fw-bold">{{ customer.username }}</h4>
+                                <p class="text-muted mb-3"><i class="bi bi-envelope me-2"></i>{{ customer.email }}</p>
+                            </div>
+                            <span class="badge-zora badge px-3 py-2 text-uppercase rounded-pill">Administrador</span>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button class="btn-zora px-4 py-2">
+                                <i class="bi bi-pencil-square me-1"></i> Editar Perfil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4" style="border-color: rgba(255,255,255,0.05);">
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <small class="text-muted d-block fw-bold small text-uppercase">ID Admin</small>
+                        <span class="text-white">#ZRA-00{{ customer.id }}</span>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted d-block fw-bold small text-uppercase">Permisos</small>
+                        <span class="text-zora">Acceso Total</span>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted d-block fw-bold small text-uppercase">Último Acceso</small>
+                        <span class="text-white small">Hoy, {{ range(10, 24)|random }}:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a href="{{ url_for('admin.add_shop_items') }}" class="btn btn-outline-primary w-100 py-3 fw-bold border-2" 
+                   style="border-style: dashed; color: var(--zora-primary); border-color: var(--zora-primary);">
+                    <i class="bi bi-plus-circle me-2"></i> PUBLICAR NUEVO PRODUCTO
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

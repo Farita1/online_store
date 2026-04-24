@@ -97,7 +97,7 @@
             {% for category, message in messages %}
               Swal.fire({
                 title: "{{ '¡Hecho!' if category == 'success' else 'Aviso' }}",
-                text: "{{ message }}",
+                text: "{{ message | safe }}",
                 icon: "{{ 'success' if category == 'success' else 'error' }}",
                 confirmButtonColor: '#7c4dff',
                 background: '#1a1d20',
@@ -139,6 +139,7 @@
     <script src='{{ url_for("static", filename="js/owl.carousel.min.js") }}'></script>
     <script src='{{ url_for("static", filename="js/jquery.dataTables.min.js") }}'></script>
     <script src='{{ url_for("static", filename="js/dataTables.bootstrap5.min.js") }}'></script>
+    <script src="{{ url_for('static', filename='js/admin_actions.js') }}"></script>
 
     {% block scripts %}
     {% endblock %}
