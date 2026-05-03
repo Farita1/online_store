@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Blueprint, flash, redirect, render_template, url_for
 from flask_login import current_user, login_user, login_required, logout_user
 from .forms import PasswordChangeForm, SignUpForm, LoginForm
@@ -69,8 +71,10 @@ def profile(customer_id):
     # 1. Verificamos si el usuario actual es el Administrador (ID 1)
     if current_user.id == 1:
         # Obtenemos los productos para mostrar el conteo en las stats del dashboard
-        items = Product.query.all() 
-        return render_template('admin_profile.html', customer=current_user, items=items)
+        items = Product.query.all()
+        # Obtenemos la hora del sistema para mostrarla en el dashboard
+        time_now = datetime.now().strftime("%I:%M %p")
+        return render_template('admin_profile.html', customer=current_user, items=items, time_now=time_now)
 
     # 2. Si no es admin, cargamos el perfil de cliente normal
     customer = Customer.query.get_or_404(customer_id)

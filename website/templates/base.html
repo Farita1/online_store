@@ -40,15 +40,24 @@
                     <li class="nav-item"><a class="nav-link" href="#">Tendencias</a></li>
                 </ul>
 
-                <form class="d-flex mx-auto search-container" role="search" action="/search" style="width: 45%;" method="POST">
+                <form class="d-flex mx-auto search-container" role="search" action="/search" style="width: 40%;" method="POST">
                     <input class="form-control search-input" name="search" type="search" placeholder="Buscar en Zora..." aria-label="Search">
                     <button class="btn btn-zora" type="submit"><i class="bi bi-search"></i></button>
                 </form>
 
                 <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item px-3">
-                        <a class="nav-link cart-icon" href="/cart">
-                            <i class="bi bi-bag-heart"></i>
+                    <li class="nav-item px-2">
+                        <a class="nav-link cart-icon" href="/wishlist" title="Lista de Deseos">
+                            <i class="bi bi-heart"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge-zora">
+                                0
+                            </span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item px-2 me-2">
+                        <a class="nav-link cart-icon" href="{{ url_for('views.show_cart') }}" title="Mi Carrito">
+                            <i class="bi bi-bag"></i>
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill badge-zora">
                                 {{ cart | length if cart else 0 }}
                             </span>
@@ -135,6 +144,7 @@
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="{{ url_for ('static', filename='js/myScript.js')}}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src='{{ url_for("static", filename="js/owl.carousel.min.js") }}'></script>
     <script src='{{ url_for("static", filename="js/jquery.dataTables.min.js") }}'></script>

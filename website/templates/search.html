@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %} Resultados de Búsqueda {% endblock %}
+
+{% block body %}
+
+<div class="container mt-5 mb-5 text-center">
+    {% if items | length < 1 %}
+        <div class="p-5 zora-card-bg rounded shadow border-primary-zora">
+            <h3 class="text-white">No se encontraron productos que coincidan con tu búsqueda</h3>
+            <p class="text-muted">Intenta con otros términos o explora nuestras categorías.</p>
+            <a href="/" class="btn-zora d-inline-block mt-3 px-4">Volver al inicio</a>
+        </div>
+    {% else %}
+        <h2 class="text-white text-start mb-4" style="font-weight: 700;">Resultados de búsqueda</h2>
+        
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+            {% for item in items %}
+            <div class="col">
+                <div class="zora-card-bg h-100 p-3 transition-03 border-primary-zora shadow">
+                    <!-- Contenedor de Imagen CORREGIDO -->
+                    <div class="mb-3 position-relative" style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 10px;">
+                        <img src="{{ url_for('static', filename='uploads/' + item.product_picture) }}" 
+                             alt="{{ item.product_name }}" 
+                             style="height: 180px; width: 100%; object-fit: contain; border-radius: 6px;">
+                    </div>
+
+                    <!-- Título del Producto -->
+                    <h6 class="text-zora mb-2" style="font-weight: 700; min-height: 40px;">{{ item.product_name }}</h6>
+                    
+                    <!-- Precios con formato COP -->
+                    <div class="mb-3">
+                        <h5 class="fw-bold mb-0 text-white">
+                            COP {{ "{:,.0f}".format(item.current_price / 1000).replace(',', '.') }}.000$
+                        </h5>
+                        
+                        {% if item.previous_price is not none and item.previous_price > item.current_price %}
+                            <small class="text-muted text-decoration-line-through">
+                                COP {{ "{:,.0f}".format(item.previous_price / 1000).replace(',', '.') }}.000$
+                            </small>
+                        {% endif %}
+                    </div>
+
+                    <!-- Stock y Botón -->
+                    <div class="mt-auto">
+                        <p class="mb-2" style="font-size: 0.85rem; color: var(--zora-muted);">
+                            <i class="fa-solid fa-box-open me-1"></i> {{ item.in_stock }} Artículos restantes
+                        </p>
+                        <a href="/add-to-cart/{{ item.id }}" class="btn-zora d-block">
+                            <i class="fa-solid fa-cart-plus me-1"></i> Añadir al carrito
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}
