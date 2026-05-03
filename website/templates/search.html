@@ -7,8 +7,9 @@
 <div class="container mt-5 mb-5 text-center">
     {% if items | length < 1 %}
         <div class="p-5 zora-card-bg rounded shadow border-primary-zora">
-            <h3 class="text-white">No se encontraron productos que coincidan con tu búsqueda</h3>
-            <p class="text-muted">Intenta con otros términos o explora nuestras categorías.</p>
+            <i class="fa-solid fa-magnifying-glass mb-3 text-muted" style="font-size: 3rem;"></i>
+            <h3 class="text-white">No se encontraron productos</h3>
+            <p class="text-muted">Intenta con otros términos o revisa la ortografía.</p>
             <a href="/" class="btn-zora d-inline-block mt-3 px-4">Volver al inicio</a>
         </div>
     {% else %}
@@ -18,7 +19,7 @@
             {% for item in items %}
             <div class="col">
                 <div class="zora-card-bg h-100 p-3 transition-03 border-primary-zora shadow">
-                    <!-- Contenedor de Imagen CORREGIDO -->
+                    <!-- Contenedor de Imagen -->
                     <div class="mb-3 position-relative" style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 10px;">
                         <img src="{{ url_for('static', filename='uploads/' + item.product_picture) }}" 
                              alt="{{ item.product_name }}" 
@@ -41,15 +42,15 @@
                         {% endif %}
                     </div>
 
-                    <!-- Stock y Botón -->
+                    <!-- Stock y Botón AJAX -->
                     <div class="mt-auto">
                         <p class="mb-2" style="font-size: 0.85rem; color: var(--zora-muted);">
                             <i class="fa-solid fa-box-open me-1"></i> {{ item.in_stock }} Artículos restantes
                         </p>
-                        <a href="/add-to-cart/{{ item.id }}" class="btn-zora d-block">
+                        <a href="{{ url_for('views.add_to_cart', item_id=item.id) }}" class="btn-zora d-block">
                             <i class="fa-solid fa-cart-plus me-1"></i> Añadir al carrito
                         </a>
-                    </div>
+                        </div>
                 </div>
             </div>
             {% endfor %}

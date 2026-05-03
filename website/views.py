@@ -1,9 +1,107 @@
-from flask import Blueprint, redirect, render_template, request, jsonify, flash
+from flask import Blueprint, redirect, render_template, request, jsonify, flash, url_for
 from flask_login import login_required, current_user
-from .models import Cart, Product, ProductVariant
+from .models import Cart, Order, Product, ProductVariant
 from . import db
+import mercadopago
+import credenciales
+import uuid # Asegúrate de tener esto al inicio de tu archivo
 
 views = Blueprint('views', __name__)
+
+# Así debe verse en tu archivo views.py o donde inicialices el SDK
+sdk = mercadopago.SDK("APP_USR-8778003157106093-050317-f6cdc983f845e1aa5c8a390ec5deddf6-3374900175")
+
+@views.route('/place-order')
+@login_required
+def place_order():
+    # 1. Obtener los productos del carrito de Zora para este usuario
+    customer_cart = Cart.query.filter_by(customer_link=current_user.id).all()
+    
+    if not customer_cart:
+        flash('Tu carrito está vacío')
+        return redirect(url_for('views.home'))
+
+    try:
+        # 2. Calcular el total
+        # Forzamos a int porque en pesos colombianos no usamos decimales para la API
+        total_float = sum(item.variant.product.current_price * item.quantity for item in customer_cart)
+        total_final = int(total_float) 
+
+        # 3. Preparar los datos de la preferencia
+        # Usamos uuid para generar una referencia externa única
+        external_ref = str(uuid.uuid4())
+
+        preference_data = {
+            "items": [
+                {
+                    "title": "Compra en Zora Store",
+                    "quantity": 1,
+                    "unit_price": total_final,
+                    "currency_id": "COP"
+                }
+            ],
+            "back_urls": {
+                "success": url_for('views.order', _external=True),
+                "failure": url_for('views.home', _external=True),
+                "pending": url_for('views.order', _external=True)
+            },
+            "external_reference": external_ref,
+            "payment_methods": {
+                "installments": 1 # Evita complicaciones de cuotas en pruebas
+            },
+            "binary_mode": True # Solo acepta pagos aprobados o rechazados (sin estados intermedios)
+        }
+        
+        # 4. Crear la preferencia en el SDK de Mercado Pago
+        preference_response = sdk.preference().create(preference_data)
+        
+        if preference_response["status"] not in [200, 201]:
+            print(f"Error Mercado Pago: {preference_response['response']}")
+            flash("No se pudo conectar con la pasarela de pago.")
+            return redirect(url_for('views.home'))
+
+        preference = preference_response["response"]
+
+        # 5. Crear los registros de la Orden en la DB antes de redirigir
+        for item in customer_cart:
+            new_order = Order()
+            new_order.quantity = item.quantity
+            new_order.price = item.variant.product.current_price
+            new_order.status = 'Pending'
+            new_order.payment_id = preference['id'] # Guardamos el ID de MP para rastreo
+            new_order.customer_link = current_user.id
+            new_order.variant_link = item.variant_link 
+            
+            db.session.add(new_order)
+            
+            # Limpiar el carrito (ya se convirtió en orden)
+            db.session.delete(item)
+
+        db.session.commit()
+
+        # 6. Redirigir al usuario al Checkout Pro de Mercado Pago
+        # Se usa 'init_point' para producción o 'sandbox_init_point' para pruebas
+        return redirect(preference['init_point'])
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error crítico en Zora (place_order): {str(e)}")
+        flash('Ocurrió un problema interno al procesar tu pedido.')
+        return redirect(url_for('views.home'))
+
+
+@views.route('/orders')
+@login_required
+def order():
+    # Mercado Pago envía el resultado por la URL
+    status = request.args.get('status')
+    payment_id = request.args.get('payment_id')
+
+    if status == 'approved':
+        # Aquí buscarías la orden en tu DB con el payment_id y actualizarías su estado
+        flash("¡Pago aprobado! Tu pedido está en camino.")
+    
+    return render_template("orders.html")
 
 @views.route('/')
 def home():
@@ -15,13 +113,9 @@ def home():
 @views.route('add-to-cart/<int:item_id>')
 @login_required
 def add_to_cart(item_id):
-    # 1. Obtener el producto
     product = Product.query.get_or_404(item_id)
-    
-    # 2. Intentar obtener la primera variante
     variant = ProductVariant.query.filter_by(product_id=item_id).first()
     
-    # 3. Si no existe ninguna variante, creamos una por defecto para que funcione el sistema
     if not variant:
         try:
             variant = ProductVariant(
@@ -35,38 +129,31 @@ def add_to_cart(item_id):
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            print(f"Error al crear variante por defecto: {e}")
-            flash('No se pudo procesar el producto (falta variante)')
-            return redirect(request.referrer)
+            flash('No se pudo procesar el producto', category='error')
+            return redirect(url_for('views.home'))
 
-    # 4. Verificar si ya existe en el carrito
     item_exists = Cart.query.filter_by(variant_link=variant.id, customer_link=current_user.id).first()
     
-    if item_exists:
-        try:
+    try:
+        if item_exists:
             item_exists.quantity += 1
-            db.session.commit()
-            flash(f'¡Cantidad de {product.product_name} actualizada!', category='success')
-        except Exception as e:
-            db.session.rollback()
-            flash('Error al actualizar cantidad', category='error')
-    else:
-        # 5. Si no existe, crear nuevo item en el carrito ligado a la variante
-        new_cart_item = Cart(
-            quantity=1,
-            variant_link=variant.id,
-            customer_link=current_user.id
-        )
-        try:
+            flash(f'Cantidad de {product.product_name} actualizada.', category='success')
+        else:
+            new_cart_item = Cart(
+                quantity=1,
+                variant_link=variant.id,
+                customer_link=current_user.id
+            )
             db.session.add(new_cart_item)
-            db.session.commit()
-            flash(f'¡{product.product_name} añadido al carrito!', category='success')
-        except Exception as e:
-            db.session.rollback()
-            print(f"Error al añadir al carrito: {e}")
-            flash('Hubo un problema al añadir el producto')
+            flash(f'{product.product_name} añadido al carrito.', category='success')
+        
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        flash('Error al añadir al carrito', category='error')
 
-    return redirect(request.referrer)
+    # CORRECCIÓN AQUÍ: Se usa el nombre de la función 'show_cart'
+    return redirect(url_for('views.show_cart'))
 
 @views.route('/cart')
 @login_required

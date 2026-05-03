@@ -101,13 +101,15 @@
                         $<span id="totalamount">{{ "{:,.0f}".format(total) }}</span>
                     </span>
                 </div>
-
+                
                 <div class="d-grid gap-2">
-                    <button class="btn btn-zora py-3 fw-bold shadow-glow">
+                    <!-- Cambiamos el <a> para que apunte a 'views.place_order' -->
+                    <a href="{{ url_for('views.place_order') }}"
+                        class="btn btn-zora py-3 fw-bold shadow-glow text-decoration-none text-center">
                         PROCEDER AL PAGO
-                    </button>
+                    </a>
                 </div>
-            </div>
+                </div>
         </div>
     </div>
 </div>
