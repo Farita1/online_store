@@ -1,0 +1,295 @@
+/* =======================================================
+   PALETA DE COLORES PROPIA: ZORA CORE
+   ======================================================= */
+:root {
+    --zora-bg: #121417;          /* Fondo Carbón */
+    --zora-nav: #1a1d21;         /* Nav Gris Oscuro */
+    --zora-primary: #7c4dff;      /* Violeta Eléctrico (Marca) */
+    --zora-primary-glow: rgba(124, 77, 255, 0.3);
+    --zora-accent: #00e676;       /* Esmeralda (Acciones/Éxito) */
+    --zora-text: #f8f9fa;
+    --zora-muted: #9ca3af;
+    --zora-card-bg: rgba(26, 29, 33, 0.9);
+}
+
+/* =======================================================
+   ESTILOS GLOBALES
+   ======================================================= */
+body {
+    background: linear-gradient(rgba(18, 20, 23, 0.85), rgba(18, 20, 23, 0.85)), 
+                url("../images/—Pngtree—a fully equipped gym with_16142999.png");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    
+    color: var(--zora-text);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+}
+
+.zora-dot { color: var(--zora-primary); }
+.text-zora { color: var(--zora-primary) !important; }
+.bg-zora { background-color: var(--zora-primary) !important; color: white !important; }
+.shadow-glow { box-shadow: 0 0 20px var(--zora-primary-glow); }
+.transition-03 { transition: all 0.3s ease; }
+
+/* =======================================================
+   NAVEGACIÓN Y FOOTER
+   ======================================================= */
+.navbar {
+    background-color: var(--zora-nav) !important;
+    border-bottom: 2px solid var(--zora-primary);
+    padding: 0.8rem 1rem;
+}
+
+.navbar-brand {
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: var(--zora-text) !important;
+}
+
+.nav-link {
+    color: var(--zora-muted) !important;
+    transition: 0.3s;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    color: var(--zora-primary) !important;
+}
+
+.cart-icon {
+    position: relative;
+    font-size: 1.2rem;
+}
+
+.badge-zora {
+    background-color: var(--zora-accent);
+    color: #000;
+    font-size: 0.7rem;
+}
+
+footer {
+    background-color: #0a0c0e;
+    color: var(--zora-muted);
+    border-top: 1px solid #252a30;
+    padding: 2rem 0;
+}
+
+/* =======================================================
+   COMPONENTES: CARDS Y BOTONES
+   ======================================================= */
+.zora-card-bg {
+    background-color: var(--zora-card-bg) !important; 
+    border: 1px solid #2d3238;
+    border-radius: 10px;
+    padding: 15px;
+    color: var(--zora-text);
+    backdrop-filter: blur(8px); 
+}
+
+.btn-zora {
+    background-color: var(--zora-primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 20px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-zora:hover {
+    background-color: #6435c9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px var(--zora-primary-glow);
+    color: white;
+}
+
+.hover-zora:hover {
+    color: var(--zora-primary) !important;
+    transform: translateX(-5px);
+}
+
+/* =======================================================
+   FORMULARIOS Y INPUTS
+   ======================================================= */
+.search-container {
+    background: #252a30;
+    border-radius: 8px;
+    padding: 4px;
+    border: 1px solid #333;
+    transition: 0.3s;
+}
+
+.search-container:focus-within {
+    border-color: var(--zora-primary);
+    box-shadow: 0 0 10px var(--zora-primary-glow);
+}
+
+.search-input {
+    background: transparent !important;
+    border: none !important;
+    color: white !important;
+    box-shadow: none !important;
+}
+
+.search-input::placeholder {
+    color: #5a5d61;
+}
+
+.border-primary-zora { border: 1px solid var(--zora-primary) !important; }
+
+/* Spinners Pro Zora */
+.custom-spin {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+    padding-right: 38px !important;
+}
+
+.custom-spin::-webkit-inner-spin-button {
+    appearance: none;
+    -webkit-appearance: none;
+    display: block !important;
+    background-color: #000000 !important;
+    opacity: 1 !important;
+    width: 32px;
+    height: 100%;
+    cursor: pointer;
+    border-left: 1px solid var(--zora-primary);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%237c4dff' d='M12 6l-4 4h8l-4-4zM12 18l4-4H8l4 4z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 24px;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.spinner-overlay {
+    position: absolute;
+    top: 0; right: 0; width: 35px; height: 100%;
+    z-index: 10; cursor: pointer; background: transparent;
+}
+
+/* =======================================================
+   TABLAS DE INVENTARIO (ADMIN)
+   ======================================================= */
+.table-zora {
+    background-color: #1a1d21 !important; /* Fondo oscuro sólido para la tabla */
+    color: var(--zora-text) !important;
+    border-radius: 12px;
+    overflow: hidden;
+    border: none !important;
+}
+
+.table-zora tr, 
+.table-zora td, 
+.table-zora th {
+    background-color: transparent !important;
+    color: var(--zora-text) !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    vertical-align: middle;
+}
+
+.table-zora thead th {
+    background-color: rgba(124, 77, 255, 0.15) !important;
+    color: var(--zora-primary) !important;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    padding: 15px;
+    border-bottom: 2px solid var(--zora-primary) !important;
+}
+
+
+.table-zora tbody tr:hover {
+    background-color: rgba(124, 77, 255, 0.05) !important;
+}
+
+.badge-stock {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.table-action {
+    padding: 5px 8px;
+    border-radius: 4px;
+    transition: 0.3s;
+    text-decoration: none;
+    font-size: 1.1rem;
+    display: inline-flex;
+}
+
+.table-action.edit { color: #00d2ff; }
+.table-action.delete { color: #ff4d4d; border: none; background: transparent; }
+
+.table-action:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}
+
+/* =======================================================
+   LISTAS Y MENÚ ADMIN
+   ======================================================= */
+.list-group-item {
+    background-color: transparent !important;
+    color: var(--zora-text) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding: 0.8rem 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.list-group-item:hover {
+    background-color: rgba(124, 77, 255, 0.1) !important;
+    border-left: 4px solid var(--zora-primary) !important;
+    color: var(--zora-primary) !important;
+    transform: translateX(5px);
+}
+
+.admin-menu .list-group-item {
+    border: none !important;
+}
+
+.admin-menu .list-group-item:hover {
+    padding-left: 25px !important;
+}
+
+/* =======================================================
+   DATATABLES CUSTOM
+   ======================================================= */
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input {
+    background-color: #252a30 !important;
+    border: 1px solid #444 !important;
+    color: white !important;
+    border-radius: 6px;
+    padding: 4px 8px;
+}
+
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+    color: var(--zora-muted) !important;
+    margin-top: 15px;
+}
+
+/* =======================================================
+   AUTENTICACIÓN
+   ======================================================= */
+.auth-section {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+}
+
+.auth-section .zora-card-bg {
+    border: 1px solid rgba(124, 77, 255, 0.3);
+}
+
+.custom-switch .form-check-input:checked {
+    background-color: var(--zora-primary);
+    border-color: var(--zora-primary);
+}
