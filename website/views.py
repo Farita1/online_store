@@ -3,8 +3,7 @@ from flask_login import login_required, current_user
 from .models import Cart, Order, Product, ProductVariant
 from . import db
 import mercadopago
-import credenciales
-import uuid # Asegúrate de tener esto al inicio de tu archivo
+import uuid
 
 views = Blueprint('views', __name__)
 

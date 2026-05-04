@@ -22,3 +22,21 @@ Backend: Python con el micro-framework Flask.
 - Seguridad: Flask-Login para el manejo de sesiones de usuario.
 
 - Frontend: Jinja2, HTML5 y CSS3 para interfaces dinámicas.
+
+
+Instalación:
+En el powershell o cmd
+- python -m venv entorno
+
+(Recuerda activar el entorno antes de instalar)
+cd .\entorno\Scripts\
+
+.\activate          <---- escribelo a secas like this
+
+instalar dependencias:
+- pip install -r requirements.txt
+
+Para correr la pagina
+python main.py
+o
+Te metes en el archivo "main.py" y le das a ejecutar con python 🤙
