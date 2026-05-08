@@ -19,8 +19,26 @@
 
                     {% for item in orders %}
 
+                    {# =========================
+                       PROGRESO DINÁMICO
+                    ========================= #}
+                    {% set progress = 0 %}
+
+                    {% if item.status == 'Pending' %}
+                        {% set progress = 0 %}
+                    {% elif item.status == 'Paid' %}
+                        {% set progress = 33 %}
+                    {% elif item.status == 'Out for delivery' %}
+                        {% set progress = 66 %}
+                    {% elif item.status == 'Delivered' %}
+                        {% set progress = 100 %}
+                    {% elif item.status == 'Canceled' %}
+                        {% set progress = 100 %}
+                    {% endif %}
+
                     <div class="row align-items-center py-3">
 
+                        <!-- IMAGEN -->
                         <div class="col-sm-3 text-center">
                             <img
                                 src="{{ url_for('static', filename='uploads/' ~ item.variant.product.product_picture) }}"
@@ -30,6 +48,7 @@
                             >
                         </div>
 
+                        <!-- INFO PRODUCTO -->
                         <div class="col-sm-5">
 
                             <h4 class="fw-bold mb-1">
@@ -48,9 +67,11 @@
 
                         </div>
 
+                        <!-- ESTADO + PROGRESO -->
                         <div class="col-sm-4">
 
                             <div class="d-flex justify-content-between align-items-center mb-2">
+
                                 <span class="fw-bold small text-white">
                                     Estado:
                                 </span>
@@ -75,25 +96,34 @@
                                     {% endif %}
 
                                 </span>
+
                             </div>
 
-                            <div class="progress" style="height:10px; border-radius: 20px; overflow:hidden;">
+                            <!-- PROGRESS BAR FIX -->
+                            <div class="progress"
+                                 style="height:10px; border-radius: 20px; overflow:hidden; background:#1f2937;">
 
-                                {% if item.status == 'Pending' %}
-                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-secondary" style="width:20%"></div>
-
-                                {% elif item.status == 'Paid' %}
-                                <div class="progress-bar bg-info" style="width:40%"></div>
-
-                                {% elif item.status == 'Out for delivery' %}
-                                <div class="progress-bar bg-warning" style="width:70%"></div>
-
-                                {% elif item.status == 'Delivered' %}
-                                <div class="progress-bar bg-success" style="width:100%"></div>
-
-                                {% elif item.status == 'Canceled' %}
-                                <div class="progress-bar bg-danger" style="width:100%"></div>
-                                {% endif %}
+                                <div class="progress-bar"
+                                    role="progressbar"
+                                    style="
+                                        width: {{ progress }}%;
+                                        background-color:
+                                            {% if item.status == 'Canceled' %}#ff3b3b
+                                            {% elif item.status == 'Delivered' %}#00e676
+                                            {% elif item.status == 'Out for delivery' %}#ffcc00
+                                            {% elif item.status == 'Paid' %}#00d9ff
+                                            {% else %}#6b7280
+                                            {% endif %};
+                                        box-shadow: 0 0 10px
+                                            {% if item.status == 'Canceled' %}rgba(255,59,59,0.7)
+                                            {% elif item.status == 'Delivered' %}rgba(0,230,118,0.7)
+                                            {% elif item.status == 'Out for delivery' %}rgba(255,204,0,0.7)
+                                            {% elif item.status == 'Paid' %}rgba(0,217,255,0.7)
+                                            {% else %}rgba(107,114,128,0.4)
+                                            {% endif %};
+                                        transition: width 0.5s ease;
+                                    ">
+                                </div>
 
                             </div>
 
