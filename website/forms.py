@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
-from wtforms import StringField, IntegerField, FloatField, PasswordField, EmailField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, length, NumberRange, Optional, EqualTo
+from wtforms import DateField, SelectField, StringField, IntegerField, FloatField, PasswordField, EmailField, BooleanField, SubmitField
+from wtforms.validators import DataRequired, Email, length, NumberRange, Optional, EqualTo
 
 class SignUpForm(FlaskForm):
     email = EmailField('Email', validators=[DataRequired()])
@@ -49,3 +49,18 @@ class ShopItemForm(FlaskForm):
     flash_sale = BooleanField('¿Es una Oferta Flash?')
 
     submit = SubmitField('Guardar Producto')
+
+
+class GymClientForm(FlaskForm):
+    name = StringField('Nombre', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    phone = StringField('Teléfono')
+    plan_type = SelectField(
+        'Tipo de plan',
+        choices=[('mensual', 'Mensual'), ('trimestral', 'Trimestral'), ('anual', 'Anual')],
+        validators=[DataRequired()]
+    )
+    start_date = DateField('Fecha inicio', format='%Y-%m-%d')
+    end_date = DateField('Fecha fin', format='%Y-%m-%d')
+    is_active = BooleanField('Activo')
+    submit = SubmitField('Guardar')

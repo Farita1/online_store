@@ -1,8 +1,11 @@
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager # 1. Importar
+from flask_login import LoginManager
+from flask_migrate import Migrate   # 👈 NUEVO
 
 db = SQLAlchemy()
+migrate = Migrate()                 # 👈 NUEVO
+
 DB_URI = 'postgresql://postgres:crashtitan2003@localhost:5432/online_store'
 
 def create_app():
@@ -12,12 +15,13 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
     db.init_app(app)
-    
+    migrate.init_app(app, db)       # 👈 CLAVE
+
     @app.errorhandler(404)
     def page_not_found(error):
         return render_template('404.html', error=error), 404
 
-    # 2. Configurar Flask-Login
+    # Flask-Login
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
@@ -28,7 +32,7 @@ def create_app():
     def load_user(id):
         return Customer.query.get(int(id))
 
-    # Registro de Blueprints
+    # Blueprints
     from .views import views
     from .auth import auth
     from .admin import admin
@@ -36,9 +40,5 @@ def create_app():
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(admin, url_prefix='/admin')
-
-    from .models import Customer, Product, ProductVariant, Cart, Order
-    with app.app_context():
-        db.create_all()
 
     return app

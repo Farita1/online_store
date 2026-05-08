@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Cliente{% endblock %}
+
+{% block body %}
+
+<div class="container mt-5">
+
+    <!-- TITULO -->
+    <h2 class="mb-4 text-zora fw-bold">
+        Editar cliente del gimnasio
+    </h2>
+
+    <!-- CARD PRINCIPAL -->
+    <div class="zora-card-bg shadow-glow p-4">
+
+        <!-- INFO CLIENTE (SEPARADO Y MÁS CLARO) -->
+        <div class="mb-4 p-3 rounded zora-card-bg"
+             style="border-left: 4px solid var(--zora-primary);">
+
+            <div class="d-flex justify-content-between flex-wrap gap-3">
+
+                <div>
+                    <small class="text-muted">Precio actual</small>
+                    <div class="fw-bold text-zora">
+                        ${{ client.monthly_price }}
+                    </div>
+                </div>
+
+                <div>
+                    <small class="text-muted">Último pago</small>
+                    <div class="fw-bold">
+                        {{ client.payment_date }}
+                    </div>
+                </div>
+
+                <div>
+                    <small class="text-muted">Vencimiento</small>
+                    <div class="fw-bold">
+                        {{ client.expiration_date }}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- TITULO FORM -->
+        <div class="mb-3">
+            <h5 class="text-white mb-1">Actualizar datos</h5>
+            <p class="text-muted mb-0">
+                Modifica la información del cliente
+            </p>
+        </div>
+
+        <!-- FORMULARIO -->
+        <form method="POST">
+
+            <!-- NOMBRE -->
+            <div class="mb-3">
+                <label class="form-label text-white">Nombre</label>
+                <input type="text"
+                       name="name"
+                       class="form-control"
+                       style="background:#252a30; border:1px solid #333; color:white;"
+                       value="{{ client.name }}"
+                       required>
+            </div>
+
+            <!-- PLAN -->
+            <div class="mb-3">
+                <label class="form-label text-white">Tipo de plan</label>
+
+                <select name="plan_type"
+                        class="form-select"
+                        style="background:#252a30; border:1px solid #333; color:white;"
+                        required>
+
+                    <option value="day" {% if client.plan_type == 'day' %}selected{% endif %}>
+                        Día
+                    </option>
+
+                    <option value="week" {% if client.plan_type == 'week' %}selected{% endif %}>
+                        Semana
+                    </option>
+
+                    <option value="month" {% if client.plan_type == 'month' %}selected{% endif %}>
+                        Mes
+                    </option>
+
+                    <option value="year" {% if client.plan_type == 'year' %}selected{% endif %}>
+                        Año
+                    </option>
+
+                </select>
+            </div>
+
+            <!-- BOTONES -->
+            <div class="d-flex gap-2 mt-4">
+
+                <button type="submit" class="btn btn-zora">
+                    Guardar cambios
+                </button>
+
+                <a href="{{ url_for('admin.gym_clients') }}"
+                   class="btn btn-secondary"
+                   style="background:#252a30; border:1px solid #333;">
+                    Cancelar
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

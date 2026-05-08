@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-zora">Clientes del Gimnasio</h2>
+
+    <!-- FORMULARIO AGREGAR -->
+    <div class="zora-card-bg mb-4">
+        <form method="POST"
+              action="{{ url_for('admin.add_gym_client') }}"
+              class="row g-3">
+
+            <div class="col-md-5">
+                <input type="text"
+                       name="name"
+                       class="form-control"
+                       placeholder="Nombre del cliente"
+                       required>
+            </div>
+
+            <div class="col-md-4">
+                <select name="plan_type" class="form-select" required>
+                    <option value="">Tipo de plan</option>
+                    <option value="day">Día — $ 5.000</option>
+                    <option value="week">Semana — $ 25.000</option>
+                    <option value="month">Mes — $ 65.000</option>
+                    <option value="year">Año — $ 650.000</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <button class="btn btn-zora w-100">Agregar</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- TABLA -->
+    <table class="table table-zora">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Plan</th>
+                <th>Mensualidad</th>
+                <th>Pago</th>
+                <th>Vence</th>
+                <th>Estado</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for c in clients %}
+            <tr>
+                <td>{{ c.name }}</td>
+
+                <!-- PLAN -->
+                <td class="text-capitalize">
+                    {{
+                        {
+                            'day':'Día',
+                            'week':'Semana',
+                            'month':'Mes',
+                            'year':'Año'
+                        }[c.plan_type]
+                    }}
+                </td>
+
+                <!-- PRECIO 10.000 -->
+                <td>$ {{ "{:,.0f}".format(c.monthly_price).replace(",", ".") }}</td>
+
+                <td>{{ c.payment_date }}</td>
+                <td>{{ c.expiration_date }}</td>
+
+                <!-- ESTADO (estable, sin today/now) -->
+                <td>
+                    {% if c.expiration_date >= today %}
+                        <span class="badge bg-success">Activo</span>
+                    {% else %}
+                        <span class="badge bg-danger">Vencido</span>
+                    {% endif %}
+                </td>
+
+                <!-- ACCIONES -->
+                <td class="text-center">
+
+                    <!-- EDITAR -->
+                    <a href="{{ url_for('admin.edit_gym_client', id=c.id) }}"
+                       class="btn btn-sm btn-warning me-1">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+
+                    <!-- ELIMINAR -->
+                    <form action="{{ url_for('admin.delete_gym_client', id=c.id) }}"
+                          method="POST"
+                          class="d-inline">
+                        <button type="submit"
+                                class="btn btn-sm btn-danger"
+                                onclick="return confirm('¿Eliminar cliente?')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

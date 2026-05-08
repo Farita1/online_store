@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Pedidos - Admin{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+
+  <h3 class="fw-bold mb-4">
+    Pedidos <span class="zora-dot">Recibidos</span>
+  </h3>
+
+  <div class="table-responsive zora-card-bg shadow-glow">
+    <table class="table table-zora align-middle mb-0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Precio</th>
+          <th>Estado</th>
+          <th>Fecha</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for item in orders %}
+        <tr>
+          <td>#{{ item.id }}</td>
+
+          <td>
+            <strong>{{ item.customer.username }}</strong><br>
+            <small class="text-muted">{{ item.customer.email }}</small>
+          </td>
+
+          <td>
+            <strong>{{ item.product.product_name }}</strong><br>
+            <small class="text-muted">SKU: {{ item.variant.sku }}</small>
+          </td>
+
+          <td>{{ item.quantity }}</td>
+          <td>${{ "{:,.0f}".format(item.price) }} COP</td>
+
+          <td>
+            <span class="badge-stock
+              {% if item.status == 'Pendiente' %} bg-warning
+              {% elif item.status == 'Pagado' %} bg-info
+              {% elif item.status == 'En camino' %} bg-primary
+              {% elif item.status == 'Entregado' %} bg-success
+              {% elif item.status == 'Cancelado' %} bg-danger
+              {% endif %}
+            ">
+              {{ item.status }}
+            </span>
+          </td>
+
+          <td>
+            <small class="text-muted">
+              {{ item.date_ordered.strftime('%d/%m/%Y') }}
+            </small>
+          </td>
+
+          <td>
+            <form method="POST"
+                  action="{{ url_for('admin.update_order_status', order_id=item.id) }}">
+              <select name="status" class="form-select form-select-sm mb-2">
+                <option value="Pendiente" {% if item.status=='Pendiente' %}selected{% endif %}>Pendiente</option>
+                <option value="Pagado" {% if item.status=='Pagado' %}selected{% endif %}>Pagado</option>
+                <option value="En camino" {% if item.status=='En camino' %}selected{% endif %}>En camino</option>
+                <option value="Entregado" {% if item.status=='Entregado' %}selected{% endif %}>Entregado</option>
+                <option value="Cancelado" {% if item.status=='Cancelado' %}selected{% endif %}>Cancelado</option>
+              </select>
+
+              <button class="btn-zora btn-sm w-100">
+                Actualizar
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}

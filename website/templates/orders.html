@@ -1,87 +1,141 @@
 {% extends 'base.html' %}
 
-{% block title %} Mis Pedidos | Zora {% endblock %}
+{% block title %}Mis Pedidos | Zora{% endblock %}
 
 {% block body %}
-
 <div class="container my-5">
+
     <div class="row justify-content-center">
+
         {% if orders %}
         <div class="col-md-10">
-            <h1 class="text-center mb-5 fw-bold" style="color: white;">Mis Pedidos</h1>
-            
-            <div class="card shadow-lg border-0" style="border-radius: 15px; overflow: hidden;">
+
+            <h1 class="text-center mb-5 fw-bold text-white">
+                Mis Pedidos
+            </h1>
+
+            <div class="card shadow-lg border-0 zora-card-bg">
                 <div class="card-body p-4">
+
                     {% for item in orders %}
-                    <div class="row align-items-center mb-4">
-                        <!-- Imagen del Producto -->
+
+                    <div class="row align-items-center py-3">
+
                         <div class="col-sm-3 text-center">
-                            <img src="{{ item.product.product_picture }}" 
-                                 alt="{{ item.product.product_name }}" 
-                                 class="img-fluid rounded shadow-sm" 
-                                 style="max-height: 140px; object-fit: cover;">
+                            <img
+                                src="{{ url_for('static', filename='uploads/' ~ item.variant.product.product_picture) }}"
+                                alt="{{ item.variant.product.product_name }}"
+                                class="img-fluid rounded shadow"
+                                style="max-height:140px; object-fit:cover;"
+                            >
                         </div>
 
-                        <!-- Detalles del Producto -->
-                        <div class="col-sm-5 mt-3 mt-sm-0">
-                            <h4 class="fw-bold mb-1">{{ item.product.product_name }}</h4>
-                            <p class="text-muted mb-1">
-                                <span class="badge bg-light text-dark border">Cantidad: {{ item.quantity }}</span>
-                            </p>
-                            <h5 class="text-primary fw-bold">
-                                ${{ "{:,.0f}".format(item.price) }} COP
-                            </h5>
-                        </div>
+                        <div class="col-sm-5">
 
-                        <!-- Estado del Pedido -->
-                        <div class="col-sm-4 mt-3 mt-sm-0">
-                            <p class="mb-2 fw-bold text-uppercase small">Estado: 
-                                <span class="{% if item.status == 'Delivered' %}text-success{% elif item.status == 'Canceled' %}text-danger{% else %}text-primary{% endif %}">
-                                    {{ item.status }}
-                                </span>
-                            </p>
-                            
-                            <div class="progress" style="height: 10px; border-radius: 5px; background-color: #e9ecef;">
-                                {% if item.status == 'Pending' %}
-                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                                {% elif item.status == 'Accepted' %}
-                                    <div class="progress-bar bg-info" role="progressbar" style="width: 40%;" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-                                {% elif item.status == 'Out for delivery' %}
-                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 70%;" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
-                                {% elif item.status == 'Delivered' %}
-                                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                                {% elif item.status == 'Canceled' %}
-                                    <div class="progress-bar bg-danger" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                                {% endif %}
+                            <h4 class="fw-bold mb-1">
+                                {{ item.variant.product.product_name }}
+                            </h4>
+
+                            <span class="badge bg-secondary mb-2">
+                                Cantidad: {{ item.quantity }}
+                            </span>
+
+                            <div class="mt-2">
+                                <h5 class="text-zora fw-bold">
+                                    ${{ "{:,.0f}".format(item.price * item.quantity) }} COP
+                                </h5>
                             </div>
-                            <small class="text-muted d-block mt-2">Seguimiento en tiempo real</small>
+
                         </div>
+
+                        <div class="col-sm-4">
+
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="fw-bold small text-white">
+                                    Estado:
+                                </span>
+
+                                <span class="fw-semibold
+                                    {% if item.status == 'Delivered' %}text-success
+                                    {% elif item.status == 'Canceled' %}text-danger
+                                    {% else %}text-primary{% endif %}">
+
+                                    {% if item.status == 'Pending' %}
+                                        Pendiente
+                                    {% elif item.status == 'Paid' %}
+                                        Pagado
+                                    {% elif item.status == 'Out for delivery' %}
+                                        En camino
+                                    {% elif item.status == 'Delivered' %}
+                                        Entregado
+                                    {% elif item.status == 'Canceled' %}
+                                        Cancelado
+                                    {% else %}
+                                        {{ item.status }}
+                                    {% endif %}
+
+                                </span>
+                            </div>
+
+                            <div class="progress" style="height:10px; border-radius: 20px; overflow:hidden;">
+
+                                {% if item.status == 'Pending' %}
+                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-secondary" style="width:20%"></div>
+
+                                {% elif item.status == 'Paid' %}
+                                <div class="progress-bar bg-info" style="width:40%"></div>
+
+                                {% elif item.status == 'Out for delivery' %}
+                                <div class="progress-bar bg-warning" style="width:70%"></div>
+
+                                {% elif item.status == 'Delivered' %}
+                                <div class="progress-bar bg-success" style="width:100%"></div>
+
+                                {% elif item.status == 'Canceled' %}
+                                <div class="progress-bar bg-danger" style="width:100%"></div>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
                     </div>
-                    
+
                     {% if not loop.last %}
-                    <hr class="my-4 opacity-25">
+                    <hr class="border-secondary opacity-25">
                     {% endif %}
-                    
+
                     {% endfor %}
+
                 </div>
             </div>
-            
+
             <div class="text-center mt-4">
                 <a href="{{ url_for('views.home') }}" class="btn btn-outline-light px-4">
-                    <i class="fa-solid fa-arrow-left me-2"></i> Seguir comprando
+                    Seguir comprando
                 </a>
             </div>
+
         </div>
 
         {% else %}
-        <div class="col-md-6 text-center py-5">
-            <i class="fa-solid fa-box-open fa-5x mb-4" style="color: rgba(255,255,255,0.5);"></i>
-            <h1 class="fw-bold" style="color: white;">Aún no tienes pedidos</h1>
-            <p class="text-light opacity-75 mb-4">¡Anímate a realizar tu primera compra en Zora!</p>
-            <a href="{{ url_for('views.home') }}" class="btn btn-zora btn-lg px-5">Ver Catálogo</a>
+
+        <div class="col-md-6 text-center text-white">
+
+            <h2 class="mb-3">No tienes pedidos aún</h2>
+
+            <p class="text-muted">
+                Cuando hagas tu primera compra aparecerá aquí.
+            </p>
+
+            <a href="{{ url_for('views.home') }}" class="btn btn-light mt-3 px-4">
+                Ver catálogo
+            </a>
+
         </div>
+
         {% endif %}
+
     </div>
 </div>
-
 {% endblock %}

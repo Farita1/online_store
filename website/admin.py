@@ -1,12 +1,38 @@
+from datetime import date, timedelta
+
 from flask import Blueprint, render_template, flash, redirect, request, url_for, current_app
 from flask_login import current_user, login_required
-from website.models import Product
+from website.models import GymClient, Order, Product
 from .forms import ShopItemForm
 from website import db
 import os
 from werkzeug.utils import secure_filename
 
-admin = Blueprint('admin', __name__)
+admin = Blueprint('admin', __name__, url_prefix='/admin')
+
+@admin.route('/admin/order/<int:order_id>/status', methods=['POST'])
+@login_required
+def update_order_status(order_id):
+
+    # 🔐 Protección admin
+    if current_user.id != 1:
+        flash('Acceso no autorizado', category='danger')
+        return redirect(url_for('views.home'))
+
+    order = Order.query.get_or_404(order_id)
+    new_status = request.form.get('status')
+
+    order.status = new_status
+    db.session.commit()
+
+    flash('Estado de la orden actualizado', category='success')
+    return redirect(url_for('admin.orders'))
+
+@admin.route('/orders')
+@login_required
+def orders():
+    orders = Order.query.order_by(Order.date_ordered.desc()).all()
+    return render_template('orders_admin.html', orders=orders)
 
 @admin.route('/add-shop-items', methods=['GET', 'POST'])
 def add_shop_items():
@@ -137,3 +163,114 @@ def delete_item(item_id):
             flash('Error al eliminar el producto', 'danger')
             return redirect(url_for('admin.add_shop_items'))
     return render_template('404.html'), 404
+
+# =========================
+# GYM CLIENTS SYSTEM FIXED
+# =========================
+
+PLANS = {
+    "day":   {"price": 5000,   "days": 1},
+    "week":  {"price": 25000,  "days": 7},
+    "month": {"price": 65000,  "days": 30},
+    "year":  {"price": 650000, "days": 365},
+}
+
+
+@admin.route('/gym-clients')
+@login_required
+def gym_clients():
+    if current_user.id != 1:
+        flash('Acceso no autorizado', 'danger')
+        return redirect(url_for('views.home'))
+
+    clients = GymClient.query.all()
+    today = date.today()
+
+    return render_template(
+        'gym_clients.html',
+        clients=clients,
+        today=today
+    )
+
+
+@admin.route('/gym-clients/add', methods=['POST'])
+@login_required
+def add_gym_client():
+    if current_user.id != 1:
+        return render_template('404.html'), 404
+
+    name = request.form.get('name')
+    plan_type = request.form.get('plan_type')
+
+    plan = PLANS.get(plan_type)
+    if not plan:
+        flash('Plan inválido', 'danger')
+        return redirect(url_for('admin.gym_clients'))
+
+    payment_date = date.today()
+    expiration_date = payment_date + timedelta(days=plan["days"])
+
+    client = GymClient(
+        name=name,
+        plan_type=plan_type,
+        monthly_price=plan["price"],
+        payment_date=payment_date,
+        expiration_date=expiration_date
+    )
+
+    db.session.add(client)
+    db.session.commit()
+
+    flash('Cliente agregado correctamente', 'success')
+    return redirect(url_for('admin.gym_clients'))
+
+
+@admin.route('/gym-clients/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_gym_client(id):
+
+    if current_user.id != 1:
+        return render_template('404.html'), 404
+
+    client = GymClient.query.get_or_404(id)
+
+    if request.method == 'POST':
+        name = request.form.get('name')
+        plan_type = request.form.get('plan_type')
+
+        plan = PLANS.get(plan_type)
+        if not plan:
+            flash('Plan inválido', 'danger')
+            return redirect(url_for('admin.gym_clients'))
+
+        # actualizar datos
+        client.name = name
+
+        # solo recalcular si cambia el plan
+        if client.plan_type != plan_type:
+            client.plan_type = plan_type
+            client.monthly_price = plan["price"]
+            client.payment_date = date.today()
+            client.expiration_date = date.today() + timedelta(days=plan["days"])
+
+        db.session.commit()
+
+        flash('Cliente actualizado correctamente', 'success')
+        return redirect(url_for('admin.gym_clients'))
+
+    return render_template('edit_gym_client.html', client=client)
+
+
+@admin.route('/gym-clients/delete/<int:id>')
+@login_required
+def delete_gym_client(id):
+
+    if current_user.id != 1:
+        return render_template('404.html'), 404
+
+    client = GymClient.query.get_or_404(id)
+    db.session.delete(client)
+    db.session.commit()
+
+    flash('Cliente eliminado', 'warning')
+    return redirect(url_for('admin.gym_clients'))
